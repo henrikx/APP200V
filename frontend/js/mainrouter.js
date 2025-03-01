@@ -9,11 +9,10 @@ document.addEventListener('DOMContentLoaded', function () { // Gjør at scriptet
             })
             .then(() => {
                 //load page specific js
-                fetch(`/js/${pageName}.js`) // Hent scriptet fra "/js/<pagename>.js"
-                    .then(response => response.text()) // Hent innholdet (JS) fra scriptet
-                    .then(js => {
-                        eval(js); // Evaluer scriptet
-                    })
+                const script = document.createElement('script');
+                script.src = `/js/${pageName}.js`;
+                script.type = 'module';
+                document.body.appendChild(script);
             })
             .catch(error => console.error('Error loading page:', error)); // Dersom det skjer en feil, vis feilmelding i konsollen
     }

@@ -31,93 +31,82 @@ nav{
 li a:hover {
   background-color: #000000;
 }
-  .LogInContainer{
-   border: 2px solid #2e588b;
-    width: 80%;
-    margin-left: 10%;
-    border-width: 1px;
-  }
-  .LogInContainer h2, h4,input, button{
-    padding: 2%;
-    margin: 2%;
-    width: 90%;
-    border-width: 1px;
-    text-align: center;
-  }
-  .LogInContainer button{
-    width: 40%;
-    margin-left: 30%;
-    margin-bottom: 5%;
-    color: white;
-    background-color: #2e588b;
-    border-radius: 4px;
-    padding: 4%;
-  }
-  .Tittler{
-   text-align: center;
-    margin-top: 5%;
-     margin-bottom: 5%;
-  }
+.LogInContainer{
+  border: 2px solid #2e588b;
+  width: 80%;
+  border-width: 1px;
+  
+}
+.LogInContainer h2, h4,input, button{
+  padding: 2%;
+  margin: 2%;
+  width: 90%;
+  border-width: 1px;
+  text-align: center;
+}
+.loginButtons{
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  width: 250px;
+}
 
-
+.Tittler{
+  text-align: center;
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
 
 @media screen and (min-width: 1374px){
   .LogInContainer{
     border: 2px solid #2e588b;
     width: 20%;
-    margin-left: 39%;
     border-width: 1px;
     padding: 1%;
   }
   .LogInContainer h2, h4,input, button{
-     padding: 1%;
-     margin: 2%;
+    padding: 4%;
+    margin: 2%;
     width: 80%;
-    margin-left: 10%;
-  }
-  .LogInContainer button{
-    width: 35%;
-     margin-left: 10%;
-     margin-bottom: 5%;
+    border-radius: 4px;
   }
   .Tittler{
    text-align: center;
     margin-top: 5%;
      margin-bottom: 2%;
   }
-
 }
 
 .LogInContainer{
-margin-top: 15%;
-color: white;
-background-color: #2e588b;
-border-radius: 25px;
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  margin-left: auto;
+  margin-right: auto;
+  color: white;
+  background-color: #2e588b;
+  border-radius: 25px;
+  width: 300px;
+  padding-top:45px;
+  padding-left: 80px;
+  padding-right: 80px;
+  padding-bottom: 60px;
 }
+
 .Center{
   text-align: center;
 }
 .LogInContainer button{
-color: white;
-background-color: #2e588b;
-border-radius: 4px;
-padding: 4%;
+  color: white;
+  background-color: #2e588b;
+  border-radius: 4px;
+  padding: 4%;
 }
 .loginBackRound{
-background-color: #304861;
+  background-color: #304861;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 .farge1{
