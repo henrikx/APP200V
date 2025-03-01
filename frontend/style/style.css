@@ -32,15 +32,16 @@ nav{
     background-color: #000000;
   }
     .LogInContainer{
-     border:solid;
+     border: 2px solid #2e588b;
       width: 80%;
       margin-left: 10%;
       border-width: 1px;
     }
     .LogInContainer h4,input, button{
-       padding: 1%;
-       margin: 2%;
+      padding: 2%;
+      margin: 2%;
       width: 90%;
+      border-width: 1px;
       text-align: center;
     }
     .LogInContainer button{
@@ -61,7 +62,7 @@ nav{
 
   @media screen and (min-width: 1374px){
     .LogInContainer{
-     border:solid;
+      border: 2px solid #2e588b;
       width: 20%;
       margin-left: 40%;
       border-width: 1px;
@@ -88,7 +89,51 @@ nav{
    }
 }
 
-
+.LogInContainer{
+  color: white;
+  background-color: #2B2F33;
+  border-radius: 25px;
+  
+}
 .Center{
     text-align: center;
+}
+.LogInContainer button{
+  color: white;
+  background-color: #2e588b;
+  border-radius: 4px;
+}
+.loginBackRound{
+  background-color: #304861;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.farge1{
+  color: #1e68b6;
+}
+.farge2{
+  color: #2e588b;
+}
+.farge3{
+  color: #006ce0;
+}
+.farge4{
+  color: #304861;
+}
+.farge5{
+  color: #242D36;
+}
+.farge6{
+  color: #2B2F33;
 }
