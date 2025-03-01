@@ -1,110 +1,111 @@
 *{
-    margin: 0px;
-    padding: 0px;
-    box-sizing: 0px;
-    font-family: 'Poppins', sans-serif;
+  margin: 0px;
+  padding: 0px;
+  box-sizing: 0px;
+  font-family: 'Poppins', sans-serif;
 }
 nav{
-    background-color: rgb(66, 66, 66);
+  background-color: rgb(66, 66, 66);
 }
 .nav-links{
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-  }
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
 .nav-links li{
-    float: right;
+  float: right;
 }
 .logo{
-    float: left;
+  float: left;
 }
 .nav-links a{
-    display: block;
-    color: white;
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+li a:hover {
+  background-color: #000000;
+}
+  .LogInContainer{
+   border: 2px solid #2e588b;
+    width: 80%;
+    margin-left: 10%;
+    border-width: 1px;
+  }
+  .LogInContainer h2, h4,input, button{
+    padding: 2%;
+    margin: 2%;
+    width: 90%;
+    border-width: 1px;
     text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
   }
-  
-  /* Change the link color to #111 (black) on hover */
-  li a:hover {
-    background-color: #000000;
+  .LogInContainer button{
+    width: 40%;
+    margin-left: 30%;
+    margin-bottom: 5%;
+    color: white;
+    background-color: #2e588b;
+    border-radius: 4px;
+    padding: 4%;
   }
-    .LogInContainer{
-     border: 2px solid #2e588b;
-      width: 80%;
-      margin-left: 10%;
-      border-width: 1px;
-    }
-    .LogInContainer h4,input, button{
-      padding: 2%;
-      margin: 2%;
-      width: 90%;
-      border-width: 1px;
-      text-align: center;
-    }
-    .LogInContainer button{
-      width: 40%;
-       margin-left: 30%;
-       margin-bottom: 5%;
-    }
-    .Tittler{
-     text-align: center;
-      margin-top: 5%;
-       margin-bottom: 5%;
-    }
-    .LogInContainer h2{
-      margin-top: 2%;
-     margin-left: 40%;
-   }
+  .Tittler{
+   text-align: center;
+    margin-top: 5%;
+     margin-bottom: 5%;
+  }
 
 
-  @media screen and (min-width: 1374px){
-    .LogInContainer{
-      border: 2px solid #2e588b;
-      width: 20%;
-      margin-left: 40%;
-      border-width: 1px;
-    }
-    .LogInContainer h4,input, button{
-       padding: 1%;
-       margin: 2%;
-      width: 80%;
-      margin-left: 10%;
-    }
-    .LogInContainer button{
-      width: 35%;
-       margin-left: 10%;
-       margin-bottom: 5%;
-    }
-    .Tittler{
-     text-align: center;
-      margin-top: 5%;
-       margin-bottom: 2%;
-    }
-    .LogInContainer h2{
-      margin-top: 2%;
-     margin-left: 40%;
-   }
+
+@media screen and (min-width: 1374px){
+  .LogInContainer{
+    border: 2px solid #2e588b;
+    width: 20%;
+    margin-left: 39%;
+    border-width: 1px;
+    padding: 1%;
+  }
+  .LogInContainer h2, h4,input, button{
+     padding: 1%;
+     margin: 2%;
+    width: 80%;
+    margin-left: 10%;
+  }
+  .LogInContainer button{
+    width: 35%;
+     margin-left: 10%;
+     margin-bottom: 5%;
+  }
+  .Tittler{
+   text-align: center;
+    margin-top: 5%;
+     margin-bottom: 2%;
+  }
+
 }
 
 .LogInContainer{
-  color: white;
-  background-color: #2B2F33;
-  border-radius: 25px;
-  
+margin-top: 15%;
+color: white;
+background-color: #2e588b;
+border-radius: 25px;
+
 }
 .Center{
-    text-align: center;
+  text-align: center;
 }
 .LogInContainer button{
-  color: white;
-  background-color: #2e588b;
-  border-radius: 4px;
+color: white;
+background-color: #2e588b;
+border-radius: 4px;
+padding: 4%;
 }
 .loginBackRound{
-  background-color: #304861;
+background-color: #304861;
 }
 
 
@@ -120,20 +121,20 @@ nav{
 
 
 .farge1{
-  color: #1e68b6;
+color: #1e68b6;
 }
 .farge2{
-  color: #2e588b;
+color: #2e588b;
 }
 .farge3{
-  color: #006ce0;
+color: #006ce0;
 }
 .farge4{
-  color: #304861;
+color: #304861;
 }
 .farge5{
-  color: #242D36;
+color: #242D36;
 }
 .farge6{
-  color: #2B2F33;
+color: #2B2F33;
 }
