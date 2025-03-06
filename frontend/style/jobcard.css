@@ -38,9 +38,23 @@ header h1 {
     background-color: #2B2F33;
     border-radius: 6px;
     padding: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
     color: #ffffff;
-}
+    margin-bottom: 1rem;
+    border-left: 6px solid transparent; /* Default, overridden by classes below */
+  }
+  
+  .green {
+    border-left-color: #28a745;
+  }
+  
+  .yellow {
+    border-left-color: #ffc107;
+  }
+  
+  .red {
+    border-left-color: #dc3545;
+  }
 
 /* Header section inside each card */
 .job-header {
@@ -92,18 +106,4 @@ header h1 {
 
 .details-btn:hover {
     background-color: #1E68B6;
-}
-
-/* Capacity indicator colors */
-
-.green {
-    border-left-color: #28a745;
-}
-
-.yellow {
-    border-left-color: #ffc107;
-}
-
-.red {
-    border-left-color: #dc3545;
 }
