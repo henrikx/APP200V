@@ -12,7 +12,7 @@ function handleLoginButton()
       // Signed in 
       const user = userCredential.user;
       // ...
-      window.location.href = '/?page=oversikt';
+      window.location.href = '/?page=overview';
     })
     .catch((error) => {
       const errorCode = error.code;

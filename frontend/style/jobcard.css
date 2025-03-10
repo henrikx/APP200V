@@ -1,0 +1,109 @@
+/* Reset default browser styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body styling*/
+body {
+    font-family: Arial, sans-serif;
+    background-color: #242D36;
+    color: #ffffff;
+}
+
+/* Header */
+header {
+    text-align: center;
+    padding: 1rem 0;
+    background-color: #304861;
+}
+
+header h1 {
+    font-size: 1.5rem;
+}
+
+/* Container fopr the job cards*/
+.jobs-container {
+    width: 90%;
+    max-width: 800px;
+    margin: 2rem auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Individual job card*/
+.job-card {
+    background-color: #2B2F33;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    color: #ffffff;
+    margin-bottom: 1rem;
+    border-left: 6px solid transparent; /* Default, overridden by classes below */
+  }
+  
+  .green {
+    border-left-color: #28a745;
+  }
+  
+  .yellow {
+    border-left-color: #ffc107;
+  }
+  
+  .red {
+    border-left-color: #dc3545;
+  }
+
+/* Header section inside each card */
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+/* title and date */
+.title-date {
+    display: flex;
+    flex-direction: column;
+}
+
+.job-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.capacity {
+    margin-right: 0.4rem;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #ffffff;
+    margin-bottom: 3rem;
+}
+
+/* Date styling */
+.date {
+    font-size: 0.9rem;
+    color: #eaeaea;
+    margin-bottom: 1rem;
+    margin-left: 0.2rem;
+    margin-top: 1rem;
+}
+
+/* Detail button */
+.details-btn {
+    padding: 0.5rem 1rem;
+    background-color: #006CE0;
+    border: none;
+    border-radius: 4px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.details-btn:hover {
+    background-color: #1E68B6;
+}
