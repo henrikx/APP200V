@@ -131,7 +131,7 @@ async function loadAssignments() {
   //assignment page.
       const detailsButton = card.querySelector(".details-btn");
       detailsButton.addEventListener("click", () => {
-        window.location.href = "pages/assignment.html?id=${assignmentid}";
+        window.location.href = `/?page=assignment&id=${assignmentId}`;
       });
 
       container.appendChild(card);
