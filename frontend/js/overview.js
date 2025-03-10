@@ -125,8 +125,15 @@ async function loadAssignments() {
             <span>Capacity: ${usedCount} / ${totalCap}</span>
           </div>
         </div>
-        <button class="details-btn">Details</button>
+        <button class="details-btn" data-assignment-id="${assignmentId}">Details</button>
       `;
+  //adding click event listener so the user can get redirected to the
+  //assignment page.
+      const detailsButton = card.querySelector(".details-btn");
+      detailsButton.addEventListener("click", () => {
+        window.location.href = `/?page=assignment&id=${assignmentId}`;
+      });
+
       container.appendChild(card);
     });
   } catch (error) {
