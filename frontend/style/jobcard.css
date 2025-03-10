@@ -74,6 +74,7 @@ header h1 {
     font-size: 1.1rem;
     font-weight: 600;
     color: #ffffff;
+    border-radius: 10;
 }
 
 .capacity {
