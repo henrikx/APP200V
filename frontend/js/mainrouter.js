@@ -1,11 +1,11 @@
-document.addEventListener('DOMContentLoaded', function () { // Gjør at scriptet kjører når siden er ferdig lastet
-    const params = new URLSearchParams(window.location.search); // Hent array med query-params
-    const pageName = params.get('page'); // Hent query-param med navn "page"
-    if (pageName) { //Hvis query-parameter funnet
-        fetch(`/pages/${pageName}.html`) //Hent siden fra "/?page=<pagename>.html"
-            .then(response => response.text()) // Hent innholdet (HTML) fra siden
+document.addEventListener('DOMContentLoaded', function () { // Run script on page load
+    const params = new URLSearchParams(window.location.search); // Get array with query-params
+    const pageName = params.get('page'); // Get query-parameter "page"
+    if (pageName) { //if pageName from queryparam is not null
+        fetch(`/pages/${pageName}.html`) //get the html file from the pages folder
+            .then(response => response.text()) // get the text from the response
             .then(html => {
-                document.getElementById('content').innerHTML = html; // "inject" HTML fra siden til div med id "content"
+                document.getElementById('content').innerHTML = html; // inject the html into the content div
             })
             .then(() => {
                 //load page specific js
@@ -14,8 +14,6 @@ document.addEventListener('DOMContentLoaded', function () { // Gjør at scriptet
                 script.type = 'module';
                 document.body.appendChild(script);
             })
-            .catch(error => console.error('Error loading page:', error)); // Dersom det skjer en feil, vis feilmelding i konsollen
+            .catch(error => console.error('Error loading page:', error)); // log errors to the console
     }
 });
-
-// TODO: plagiatkontroll!
