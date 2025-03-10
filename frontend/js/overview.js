@@ -1,17 +1,15 @@
-import { app } from '/js/firebase.js';
-import {
-  getFirestore,
-  collection,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+import { app } from '/js/firebase.js'
 import {
   getAuth,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-// Initialize Firestore and Auth
-const db = getFirestore(app);
+import { AssignmentsRepository } from '/js/repository/assignmentsrepository.js'
+
+// initialize Firebase Authentication
 const auth = getAuth(app);
+
+const assignmentsRepository = new AssignmentsRepository(app);
 
 // Listen for changes in authentication state and load assignments when the user is logged in
 onAuthStateChanged(auth, async (user) => {
@@ -48,45 +46,7 @@ function getCapacityClass(used, total) {
 async function loadAssignments() {
   try {
     // Fetch assignments, assignment roles, and user assignments concurrently
-    const [assignmentsSnap, rolesSnap, userAssignSnap] = await Promise.all([
-      getDocs(collection(db, "assignments")),
-      getDocs(collection(db, "assignmentRole")),
-      getDocs(collection(db, "userAssignment"))
-    ]);
-
-    // Map assignments by their ID for quick lookup
-    const assignmentsMap = {};
-    assignmentsSnap.forEach((doc) => {
-      assignmentsMap[doc.id] = doc.data();
-    });
-
-    // Sum the capacities for each assignment by iterating through each role
-    const assignmentCapacityMap = {};
-    rolesSnap.forEach((roleDoc) => {
-      const { assignmentId, capacity } = roleDoc.data();
-      if (!assignmentId) return;
-      if (!assignmentCapacityMap[assignmentId]) {
-        assignmentCapacityMap[assignmentId] = 0;
-      }
-      assignmentCapacityMap[assignmentId] += capacity;
-    });
-
-    // Count how many users have signed up for each assignment via its roles
-    const assignmentUsageMap = {};
-    userAssignSnap.forEach((uaDoc) => {
-      const { assignmentRoleId } = uaDoc.data();
-      if (!assignmentRoleId) return;
-      // Find the corresponding role document to get its assignmentId
-      const roleRef = rolesSnap.docs.find(d => d.id === assignmentRoleId);
-      if (!roleRef) return;
-      const roleData = roleRef.data();
-      const assignmentId = roleData.assignmentId;
-      if (!assignmentId) return;
-      if (!assignmentUsageMap[assignmentId]) {
-        assignmentUsageMap[assignmentId] = 0;
-      }
-      assignmentUsageMap[assignmentId]++;
-    });
+    const [assignmentsMap, assignmentCapacityMap, assignmentUsageMap] = await assignmentsRepository.getAssignments();
 
     // Get the container element where job cards will be added
     const container = document.getElementById("jobs-container");
