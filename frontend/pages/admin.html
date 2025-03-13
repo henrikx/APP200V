@@ -3,5 +3,64 @@
 </header>
 
 <main>
-
+    <div>
+        <h2>Create user</h2>
+        <div class="adminCreate">
+            <form action="">
+                <h4>Firstname</h4>
+                <input type="text" name="firstname" placeholder="Ola">
+                <h4>Surename</h4>
+                <input type="text" placeholder="Nordmann" name="surename" id=""><br>
+                <h4>Email</h4>
+                <input type="text" placeholder="Ola@Usn.no" name="" id="">
+                <h4>Password</h4>
+                <input type="email" placeholder="*****" name="" id="">
+                <h4>Phone number:</h4>
+                <input type="number" placeholder="411 63 007">
+                <h4>Roles</h4>
+            <select name="rolle">
+                <option value="Forman">Forman</option>
+                <option value="Nestformann">Nestformann</option>
+                <option value="Mottakere">Mottakere</option>
+                <option value="Følgebilsjofør">Følgebilsjofør</option>
+                <option value="Sjåfører" selected>Sjåfør</option>
+              </select>
+            </form>
+        </div>
+    
+        <div class="adminUpdate">
+            <h2>Update user</h2>
+            <form action="./search">
+           
+                <label for="userSearch">Find a user</label>
+                <input type="search" name="" id="">
+                <button type="submit">Search</button>
+                <select name="users" id=""></select>
+                <p>Userlist</p>
+                <input type="text" id="" placeholder="Search for a user" onkeyup="FUNKSJONEN()">
+    
+                <!--Liste som skal byttes ut med DB info -->>
+                <ul id="userList">
+                    <li>Ola Nordmann</li>
+                    <li>Kari Nordmann</li>
+                    <li>Bruker 3</li>
+                    <li>Bruker 4</li>
+    
+                </ul>
+    
+    
+    
+    
+    
+    
+    
+            </form>
+    
+        
+        
+        
+        
+        
+        </div>
+    </div>
 </main>
