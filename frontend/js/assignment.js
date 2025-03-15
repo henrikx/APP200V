@@ -1,43 +1,45 @@
-import {app} from '/js/firebase.js';
-import {
-    getFirestore,
-    doc,
-    getDoc,
-    collection,
-    getDocs
-}   from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+import { app } from "/js/firebase.js";
+import { AssignmentsRepository } from "/js/repository/assignmentsrepository.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-//Initalize firestore and auth
-const db = getFirestore(app);
-const auth = getAuth (app);
+// initialize Firebase Authentication
+const auth = getAuth(app);
+const assignmentsRepository = new AssignmentsRepository(app);
 
-//Load the auth state changes.
-// if not authenticated then redirected back.
+// Listen for changes in authentication state and load assignments when the user is logged in
 onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        // display the user's email:
-        const usernameElem = document.getElementById ("username");
-        if (usernameElem) {
-            usernameElem.textContent = user.email;
-        }
-        await loadAssignment();
-    } else {
-        console.log("No user is signed in.");
+  if (user) {
+    // Show the user's email (if the element exists)
+    const usernameElem = document.getElementById("username");
+    if (usernameElem) {
+      usernameElem.textContent = user.email;
     }
+    const params = new URLSearchParams(window.location.search); // Get array with query-params
+    const assignmentId = params.get('id'); // Get query-parameter "page"
+    await loadAssignment(assignmentId);
+  } else {
+    console.log("No user is signed in.");
+  }
 });
 
-// Try to fetch the assignment document from "assigments"
-// to get name of the boat and the date.
-async function loadAssignment() {
-    try {
-        const assigmentRef = doc(db, "assignments",assignmentId);
-        const assigmentSnap = await getDoc (assigmentRef);
-        if (!assigmentSnap.exists()) {
-            console.error("Assignment not found!");
-        }
-    } catch (error) {
-        console.error("An error occured: Check if data exists in database");
-    }
-}
+async function loadAssignment(assignmentId) {
+    // Fetch assignments, assignment roles, and user assignments concurrently
+    const [assignmentsMap, assignmentCapacityMap, assignmentUsageMap] = await assignmentsRepository.getAssignments(assignmentId);
+    const { name, timeStart, timeEnd } = assignmentsMap[assignmentId];
+      const totalCap = assignmentCapacityMap[assignmentId] || 0;
+      const usedCount = assignmentUsageMap[assignmentId] || 0;
 
+      //Updating the "name" element by retrieving it from firebase
+      document.getElementById('name').innerHTML = `🚢 Boat: ${name || "No name"}`;
+      
+      //Converting Firestore Timestamps to local date string
+      if (timeStart && timeEnd) {
+        const startDate = timeStart.toDate().toLocaleDateString();
+        const endDate = timeEnd.toDate().toLocaleDateString();
+        document.getElementById('date').innerHTML = `📅 Date: ${startDate} - ${endDate}`;
+    } else {
+        document.getElementById('date').innerHTML = `📅 Date: No date`;
+    }
+      //Updating the capacity element with the correct information by id
+      document.getElementById('capacity').innerHTML =`👥 Capacity: ${usedCount} / ${totalCap}`;
+}
