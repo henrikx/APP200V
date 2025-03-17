@@ -1,7 +1,11 @@
 import {
   getFirestore,
   collection,
-  getDocs
+  getDocs,
+  getDoc,
+  doc,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
 class AssignmentsRepository {
@@ -12,9 +16,9 @@ class AssignmentsRepository {
     async getAssignments(assignmentId = null) {
         let [assignmentsSnap, rolesSnap, userAssignSnap] = [null, null, null];
         if (assignmentId) {
-            [assignmentsSnap, rolesSnap, userAssignSnap] = await this.getSingleAssignmentSnaps(assignmentId, rolesSnap, userAssignSnap);
+            [assignmentsSnap, rolesSnap, userAssignSnap] = await this.getSingleAssignmentSnaps(assignmentId);
         } else {
-            [assignmentsSnap, rolesSnap, userAssignSnap] = await this.getAllAssignmentSnaps(assignmentsSnap, rolesSnap, userAssignSnap);
+            [assignmentsSnap, rolesSnap, userAssignSnap] = await this.getAllAssignmentSnaps();
         }
         
         // Map assignments by their ID for quick lookup
@@ -59,8 +63,8 @@ class AssignmentsRepository {
     }
 
 
-    async getAllAssignmentSnaps(assignmentsSnap, rolesSnap, userAssignSnap) {
-        [assignmentsSnap, rolesSnap, userAssignSnap] = await Promise.all([
+    async getAllAssignmentSnaps() {
+        const [assignmentsSnap, rolesSnap, userAssignSnap] = await Promise.all([
             getDocs(collection(this.db, "assignments")),
             getDocs(collection(this.db, "assignmentRole")),
             getDocs(collection(this.db, "userAssignment"))
@@ -69,16 +73,23 @@ class AssignmentsRepository {
         return [assignmentsSnap, rolesSnap, userAssignSnap];
     }
 
-    async getSingleAssignmentSnaps(assignmentId, rolesSnap, userAssignSnap) {
-        const docRef = collection(this.db, "assignments", assignmentId);
-        const assignmentSnap = await getDocs(docRef);
+    async getSingleAssignmentSnaps(assignmentId) {
+        const docRef = doc(this.db, "assignments", assignmentId);
+        const assignmentSnap = [ await getDoc(docRef) ];
 
-        // for the assignmentId, fetch roles and user assignments
-        [rolesSnap, userAssignSnap] = await Promise.all([
-            getDocs(collection(this.db, "assignmentRole").where("assignmentId", "==", assignmentId)),
-            getDocs(collection(this.db, "userAssignment").where("assignmentId", "==", assignmentId))
-        ]);
+        const rolesPromise = getDocs(
+            query(collection(this.db, "assignmentRole"), where("assignmentId", "==", assignmentId))
+          );
+          const userAssignPromise = getDocs(
+            query(collection(this.db, "userAssignment"), where("assignmentId", "==", assignmentId))
+          );
+        
+          const [rolesSnap, userAssignSnap] = await Promise.all([
+            rolesPromise,
+            userAssignPromise
+          ]);
 
+          
         return [assignmentSnap, rolesSnap, userAssignSnap];
     }
 }
