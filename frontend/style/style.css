@@ -150,19 +150,11 @@ color: #2B2F33;
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 10%;
-  margin: 5vh;
-
-
 }
-.adminTitle{
-  text-align: center;
-  color: white;
-}
+
 .adminCreate{
   border: 2px solid #2e588b;
   background-color: rgb(255, 255, 255);
-  padding-left: 10%;
-  padding-right: 10%;
   padding-bottom: 1%;
 
 }
@@ -176,9 +168,7 @@ color: #2B2F33;
 .adminUpdate{
   border: 2px solid #2e588b;
   background-color: white;
-  padding-right: 10%;
-  padding-left: 10%;
-  padding-bottom: 5%;
+ padding: 20px;
   text-align: center;
 
 }
@@ -200,4 +190,3 @@ color: #2B2F33;
 .adminCreate label{
   color: #000000;
 }
-.adminCreate
