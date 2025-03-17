@@ -30,16 +30,16 @@ async function loadAssignment(assignmentId) {
       const usedCount = assignmentUsageMap[assignmentId] || 0;
 
       //Updating the "name" element by retrieving it from firebase
-      document.getElementById('name').innerHTML = `🚢 Boat: ${name || "No name"}`;
+      document.getElementById('name').innerHTML = `${name || "No name"}`;
       
       //Converting Firestore Timestamps to local date string
       if (timeStart && timeEnd) {
         const startDate = timeStart.toDate().toLocaleDateString();
         const endDate = timeEnd.toDate().toLocaleDateString();
-        document.getElementById('date').innerHTML = `📅 Date: ${startDate} - ${endDate}`;
+        document.getElementById('date').innerHTML = `${startDate} - ${endDate}`;
     } else {
-        document.getElementById('date').innerHTML = `📅 Date: No date`;
+        document.getElementById('date').innerHTML = `Date: No date`;
     }
       //Updating the capacity element with the correct information by id
-      document.getElementById('capacity').innerHTML =`👥 Capacity: ${usedCount} / ${totalCap}`;
+      document.getElementById('capData').innerHTML =`${usedCount} / ${totalCap}`;
 }
