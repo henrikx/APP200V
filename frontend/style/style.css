@@ -153,13 +153,24 @@ color: #2B2F33;
 }
 
 .adminCreate{
+  text-align: center;
   border: 2px solid #2e588b;
   background-color: rgb(255, 255, 255);
   padding-bottom: 1%;
+  padding: 20px;
 
+}
+.adminCreate input{
+  margin-top: 2%;
+  margin-bottom: 5%;
+}
+.adminCreate button{
+  margin-top: 5%;
 }
 .adminCreate h2{
   text-align: center;
+  color: #000000;
+  margin-bottom: 5%;
 }
 .adminRoles{
   flex: right;
@@ -174,9 +185,11 @@ color: #2B2F33;
 }
 .adminUpdate h2{
   text-align: center;
+  color: #000000;
 }
 .adminUpdate ul{
-  list-style-type: none
+  list-style-type: none;
+  height: 20vh;
 }
 .adminUpdateList{
   border: 2px solid #2e588b;
@@ -185,8 +198,21 @@ color: #2B2F33;
   margin-top: 2%;
 }
 .adminUpdate button{
-  width: 20vh;
+  margin-top: 8%;
+  width: 15vh;
 }
 .adminCreate label{
   color: #000000;
+}
+
+@media screen and (max-width: 1374px){
+
+  .adminUser{
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .adminUpdate{
+    margin-top: 5vh;
+  }
+
 }
