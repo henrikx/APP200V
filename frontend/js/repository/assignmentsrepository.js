@@ -29,13 +29,21 @@ class AssignmentsRepository {
     
         // Sum the capacities for each assignment by iterating through each role
         const assignmentCapacityMap = {};
+        const assignmentRolesMap = {};
         rolesSnap.forEach((roleDoc) => {
-        const { assignmentId, capacity } = roleDoc.data();
-        if (!assignmentId) return;
-        if (!assignmentCapacityMap[assignmentId]) {
-            assignmentCapacityMap[assignmentId] = 0;
-        }
-        assignmentCapacityMap[assignmentId] += capacity;
+            const { assignmentId, capacity } = roleDoc.data();
+            if (!assignmentId) return;
+            if (!assignmentCapacityMap[assignmentId]) {
+                assignmentCapacityMap[assignmentId] = 0;
+            }
+            assignmentCapacityMap[assignmentId] += capacity;
+            if (!assignmentRolesMap[assignmentId]) {
+                assignmentRolesMap[assignmentId] = {};
+            }
+            assignmentRolesMap[assignmentId] = {
+                ...assignmentRolesMap[assignmentId],
+                [roleDoc.id]: roleDoc.data()
+            }; 
         });
     
         // Count how many users have signed up for each assignment via its roles
@@ -58,7 +66,8 @@ class AssignmentsRepository {
         return [
             assignmentsMap,
             assignmentCapacityMap,
-            assignmentUsageMap
+            assignmentUsageMap,
+            assignmentRolesMap
         ];
     }
 
