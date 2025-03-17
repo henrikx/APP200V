@@ -3,48 +3,49 @@
 </header>
 
 <main>
-    <div>
-        <h2>Create user</h2>
-        <div class="adminCreate">
+    <h1 class="adminTitle">Admin page</h1>
+
+    <div class="adminUser">
+    
+        <div class="adminCreate">    
+            <h2>Create user</h2>
             <form action="">
-                <h4>Firstname</h4>
-                <input type="text" name="firstname" placeholder="Ola">
-                <h4>Surename</h4>
-                <input type="text" placeholder="Nordmann" name="surename" id=""><br>
-                <h4>Email</h4>
-                <input type="text" placeholder="Ola@Usn.no" name="" id="">
-                <h4>Password</h4>
-                <input type="email" placeholder="*****" name="" id="">
-                <h4>Phone number:</h4>
-                <input type="number" placeholder="411 63 007">
-                <h4>Roles</h4>
-                <select name="roles">
-                    <option value="admin">Admin</option>
-                    <option value="userNormal" selected>User</option>
-                </select>
+                <input type="text" name="firstname" placeholder="Firstname">
+                <input type="text" placeholder="Surename" name="surename" id=""><br>
+                <input type="text" placeholder="Email" name="" id="">
+                <input type="email" placeholder="Password" name="" id="">
+                <input type="number" placeholder="Phonenumber">
+                <i class="adminRoles">
+                    <h4>Roles</h4>
+                    <select  name="rolle">
+                        <option value="admin">Admin</option>
+                        <option value="userNormal" selected>User</option>                
+                </i>            
+              </select>
             </form>
         </div>
     
         <div class="adminUpdate">
             <h2>Update user</h2>
             <form action="./search">
-           
-                <label for="userSearch">Find a user</label>
-                <input type="search" name="" id="">
+                 <input type="text" id="" placeholder="Find a user" onkeyup="FUNKSJONEN()"> 
                 <button type="submit">Search</button>
-                <select name="users" id=""></select>
-                <p>Userlist</p>
-                <input type="text" id="" placeholder="Search for a user" onkeyup="FUNKSJONEN()">
+                        <p>Userlist</p>
+                <div class="adminUpdateList">
     
-                <!--Liste som skal byttes ut med DB info -->
-                <ul id="userList">
-                    <li>Ola Nordmann</li>
-                    <li>Kari Nordmann</li>
-                    <li>Bruker 3</li>
-                    <li>Bruker 4</li>
+                 <!--Liste som skal byttes ut med DB info -->
+                    <ul id="userList">
+                        <li>Ola Nordmann</li>
+                        <li>Kari Nordmann</li>
+                        <li>Bruker 3</li>
+                         <li>Bruker 4</li>
+                     </ul>
     
-                </ul> 
-            </form>     
+                </div>
+    
+                    <button>Change role</button>
+                    <button>Delete user</button>
+            </form>
         </div>
     </div>
 </main>

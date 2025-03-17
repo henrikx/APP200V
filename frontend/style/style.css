@@ -145,3 +145,58 @@ color: #2B2F33;
 #create-job-card:hover {
   background-color: #1e68b6;
 }
+
+.adminUser{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10%;
+  margin: 5vh;
+
+
+}
+.adminTitle{
+  text-align: center;
+  color: white;
+}
+.adminCreate{
+  border: 2px solid #2e588b;
+  background-color: rgb(255, 255, 255);
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-bottom: 1%;
+
+}
+.adminCreate h2{
+  text-align: center;
+}
+.adminRoles{
+  flex: right;
+}
+
+.adminUpdate{
+  border: 2px solid #2e588b;
+  background-color: white;
+  padding-right: 10%;
+  padding-left: 10%;
+  padding-bottom: 5%;
+  text-align: center;
+
+}
+.adminUpdate h2{
+  text-align: center;
+}
+.adminUpdate ul{
+  list-style-type: none
+}
+.adminUpdateList{
+  border: 2px solid #2e588b;
+  padding-top: 1vh;
+  padding-bottom: 1vh;
+  margin-top: 2%;
+}
+.adminUpdate button{
+  width: 20vh;
+}
+.adminRoles{
+
+}
