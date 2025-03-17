@@ -197,3 +197,7 @@ color: #2B2F33;
 .adminUpdate button{
   width: 20vh;
 }
+.adminCreate label{
+  color: #000000;
+}
+.adminCreate
