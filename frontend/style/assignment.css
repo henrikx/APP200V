@@ -60,14 +60,29 @@ main {
     flex-wrap: wrap;
 }
 
-/* assignment & roles sections */
-.assignment-section,
+/* assignment */
+.assignment-section {
+    background: #1E293B;
+    border-radius: 10px;
+    padding: 20px;
+    flex: 1;                
+    min-width: 280px;        
+}
+/*roles sections */
 .roles-section {
     background: #1E293B;
     border-radius: 10px;
     padding: 20px;
     flex: 1;                
-    min-width: 280px;       
+    min-width: 280px;
+}
+
+/*styling a links and removes underline and etc*/
+
+.roles-section a {
+    display: flex;
+    text-decoration: none;
+    color: white;
 }
 
 .assignment-section h3, .roles-section h3 {

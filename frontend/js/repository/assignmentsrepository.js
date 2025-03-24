@@ -45,29 +45,39 @@ class AssignmentsRepository {
                 [roleDoc.id]: roleDoc.data()
             }; 
         });
-    
+
         // Count how many users have signed up for each assignment via its roles
         const assignmentUsageMap = {};
+        const userAssignmentMap = {};
         userAssignSnap.forEach((uaDoc) => {
-        const { assignmentRoleId } = uaDoc.data();
-        if (!assignmentRoleId) return;
-        // Find the corresponding role document to get its assignmentId
-        const roleRef = rolesSnap.docs.find(d => d.id === assignmentRoleId);
-        if (!roleRef) return;
-        const roleData = roleRef.data();
-        const assignmentId = roleData.assignmentId;
-        if (!assignmentId) return;
-        if (!assignmentUsageMap[assignmentId]) {
-            assignmentUsageMap[assignmentId] = 0;
-        }
-        assignmentUsageMap[assignmentId]++;
+            const { assignmentRoleId } = uaDoc.data();
+            if (!assignmentRoleId) return;
+            // Find the corresponding role document to get its assignmentId
+            const roleRef = rolesSnap.docs.find(d => d.id === assignmentRoleId);
+            if (!roleRef) return;
+            const roleData = roleRef.data();
+            const assignmentId = roleData.assignmentId;
+            if (!assignmentId) return;
+            if (!assignmentUsageMap[assignmentId]) {
+                assignmentUsageMap[assignmentId] = 0;
+            }
+            assignmentUsageMap[assignmentId]++;
+            
+            if (!userAssignmentMap[assignmentId]) {
+                userAssignmentMap[assignmentId] = {};
+            }
+            userAssignmentMap[assignmentId] = {
+                ...userAssignmentMap[assignmentId],
+                [uaDoc.id]: uaDoc.data()
+            };
         });
     
         return [
             assignmentsMap,
             assignmentCapacityMap,
             assignmentUsageMap,
-            assignmentRolesMap
+            assignmentRolesMap,
+            userAssignmentMap
         ];
     }
 
