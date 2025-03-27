@@ -1,14 +1,19 @@
 import { app } from '/js/firebase.js'
 import {
   getAuth,
-  onAuthStateChanged
+  onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
 
 import { AssignmentsRepository } from '/js/repository/assignmentsrepository.js'
 
 // initialize Firebase Authentication
 const auth = getAuth(app);
-
 const assignmentsRepository = new AssignmentsRepository(app);
 
 // Listen for changes in authentication state and load assignments when the user is logged in
@@ -26,8 +31,8 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 /**
- * Returns a CSS class based on how full the assignment is.
- * - If used capacity is 100% or more, return 'red'
+ * Returns a CSS class based on how full the job is.
+ * - If used capacity is 100%, return 'red'
  * - If 80% or more is used, return 'yellow'
  * - Otherwise, return 'green'
  */
@@ -45,18 +50,48 @@ function getCapacityClass(used, total) {
  */
 async function loadAssignments() {
   try {
-    // Fetch assignments, assignment roles, and user assignments concurrently
     const [assignmentsMap, assignmentCapacityMap, assignmentUsageMap] = await assignmentsRepository.getAssignments();
+    const user = auth.currentUser;
+    if (!user) return;
 
-    // Get the container element where job cards will be added
-    const container = document.getElementById("jobs-container");
-    if (!container) {
-      console.error("No #jobs-container element found.");
-      return;
+    const userId = user.uid;
+    const db = getFirestore(app);
+
+    // Fetch user assignments directly from Firestore
+    const userAssignSnap = await getDocs(collection(db, "userAssignment"));
+
+    // Build userAssignmentRoleIds (all roles the current user is assigned to)
+    const userAssignmentRoleIds = [];
+    userAssignSnap.forEach(doc => {
+      const data = doc.data();
+      if (data.userId === userId && data.assignmentRoleId) {
+        userAssignmentRoleIds.push(data.assignmentRoleId);
+      }
+    });
+
+    // Build roleId -> assignmentId map
+    const roleIdToAssignmentId = {};
+    const rolesSnap = await getDocs(collection(db, "assignmentRole"));
+    rolesSnap.forEach(roleDoc => {
+      const { assignmentId } = roleDoc.data();
+      roleIdToAssignmentId[roleDoc.id] = assignmentId;
+    });
+
+    // Determine which assignments the user is part of
+    const userAssignments = new Set();
+    for (const roleId of userAssignmentRoleIds) {
+      const assignmentId = roleIdToAssignmentId[roleId];
+      if (assignmentId) {
+        userAssignments.add(assignmentId);
+      }
     }
-    container.innerHTML = "";
 
-    // For each assignment, build a job card with capacity info
+    const availableContainer = document.getElementById("available-jobs-container");
+    const takenContainer = document.getElementById("taken-jobs-container");
+
+    availableContainer.innerHTML = "";
+    takenContainer.innerHTML = "";
+
     Object.entries(assignmentsMap).forEach(([assignmentId, assignmentData]) => {
       const { name, timeStart, timeEnd } = assignmentData;
       const totalCap = assignmentCapacityMap[assignmentId] || 0;
@@ -66,7 +101,6 @@ async function loadAssignments() {
       const card = document.createElement("div");
       card.classList.add("job-card", capacityClass);
 
-      // Convert Firestore Timestamp objects to a local date string
       const startDate = timeStart.toDate().toLocaleDateString();
       const endDate = timeEnd.toDate().toLocaleDateString();
 
@@ -87,16 +121,24 @@ async function loadAssignments() {
         </div>
         <button class="details-btn" data-assignment-id="${assignmentId}">Details</button>
       `;
-  //adding click event listener so the user can get redirected to the
-  //assignment page.
-      const detailsButton = card.querySelector(".details-btn");
-      detailsButton.addEventListener("click", () => {
+
+      card.querySelector(".details-btn").addEventListener("click", () => {
         window.location.href = `/?page=assignment&id=${assignmentId}`;
       });
 
-      container.appendChild(card);
+      // Show in appropriate column
+      if (userAssignments.has(assignmentId)) {
+        console.log("Rendering assignment:", assignmentId, {
+          assignedToUser: userAssignments.has(assignmentId)
+        });
+        
+        takenContainer.appendChild(card);
+      } else {
+        availableContainer.appendChild(card);
+      }
     });
+
   } catch (error) {
-    console.error("Error fetching Firestore data:", error);
+    console.error("Error loading assignments:", error);
   }
 }
