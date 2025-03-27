@@ -48,7 +48,7 @@ async function loadAssignment(assignmentId) {
   Object.entries(assignmentRolesMap[assignmentId]).forEach(async ([roleId, roleData]) => {
 
     //adder hver rolle til listen som en link
-    document.getElementById('roles-list').innerHTML += `<a id="${roleData.name}" href="#" onclick="expandRolesSection('${roleData.name}');"><span id="${roleData.name}-span">▼</span> ${roleData.name}</a><br>`;
+    document.getElementById('roles-list').innerHTML += `<a id="${roleData.name}" href="#" onclick="expandRolesSection('${roleData.name}');"><span id="${roleData.name}-span">▲</span> ${roleData.name}</a><br>`;
 
     Object.entries(userAssignmentMap[assignmentId]).forEach(async (userAssignmentDoc) => {
       const [userAssignmentId, userAssignment] = userAssignmentDoc;

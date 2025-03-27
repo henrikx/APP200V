@@ -14,15 +14,14 @@ class UserRepository {
     }
     async getUser(userId) {
         const userSnap = await this.getSingleUserSnaps(userId);
-        const userDoc = userSnap.data();
-        
-        return userDoc != null ? userSnap.data(): null;
+        const userDoc = userSnap[0].data();
+
+        return userDoc != null ? userDoc : null;
     }
 
     async getSingleUserSnaps(userId) {
         const docRef = doc(this.db, "users", userId);
-        const userSnap = await getDoc(docRef);
-        
+        const userSnap = [await getDoc(docRef)];
         return userSnap;
     }
 }
