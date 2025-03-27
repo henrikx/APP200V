@@ -101,8 +101,19 @@ async function loadAssignments() {
       const card = document.createElement("div");
       card.classList.add("job-card", capacityClass);
 
-      const startDate = timeStart.toDate().toLocaleDateString();
-      const endDate = timeEnd.toDate().toLocaleDateString();
+      const startDate = timeStart.toDate().toLocaleString([], {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      const endDate = timeEnd.toDate().toLocaleString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
 
       card.innerHTML = `
         <div class="job-header">
