@@ -1,0 +1,147 @@
+.profile-container {
+    padding: 40px 20px;
+    margin: auto;
+    color: white;
+    background-color: #304861;
+    border-radius: 20px;
+    max-width: 1000px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .profile-container h2,
+  .profile-container h3 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+  }
+  
+  .profile-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+  
+  .profile-picture img {
+    width: 150px;
+    height: 150px;
+    border: 5px solid white;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #ffffff22;
+  }
+  
+  .profile-info {
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .field-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    background-color: #2e588b;
+    border-radius: 10px;
+    padding: 10px 15px;
+    gap: 10px;
+  }
+  
+  .field-group label {
+    flex: 1;
+    color: white;
+    min-width: 80px;
+  }
+  
+  .field-group input {
+    flex: 2;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #000;
+    font-size: 14px;
+  }
+  
+  .field-group button {
+    flex: 0;
+    padding: 5px 10px;
+    background-color: #006ce0;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  
+  .field-group button:hover {
+    background-color: #1e68b6;
+  }
+  
+  .history-section {
+    margin-top: 40px;
+  }
+  
+  .history-box {
+    background-color: #2e588b;
+    padding: 20px;
+    border-radius: 10px;
+    height: 300px;
+    overflow-y: auto;
+  }
+  
+  .shift-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .shift-entry {
+    display: flex;
+    justify-content: space-between;
+    background-color: #304861;
+    padding: 12px;
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+  }
+  
+  .shift-description {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .shift-hours {
+    flex-shrink: 0;
+    margin-left: 20px;
+    font-weight: bold;
+    color: #fff;
+  }
+  
+  
+  .history-box p {
+    margin: 10px 0;
+    font-size: 1.1em;
+  }
+  
+  /* Responsive layout */
+  @media screen and (min-width: 768px) {
+    .profile-main {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+  
+    .profile-picture {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+  
+    .profile-info {
+      flex: 2;
+    }
+  }
+  
