@@ -15,7 +15,9 @@ nav{
 }
 .nav-links li{
   float: right;
+  display: list-item;
 }
+
 .logo{
   float: left;
 }
@@ -155,7 +157,7 @@ color: #2B2F33;
 .adminCreate{
   text-align: center;
   border: 2px solid #2e588b;
-  background-color: rgb(255, 255, 255);
+  background-color: #304861;
   padding-bottom: 1%;
   padding: 20px;
 
@@ -169,7 +171,7 @@ color: #2B2F33;
 }
 .adminCreate h2{
   text-align: center;
-  color: #000000;
+  color: white;
   margin-bottom: 5%;
 }
 .adminRoles{
@@ -178,21 +180,23 @@ color: #2B2F33;
 
 .adminUpdate{
   border: 2px solid #2e588b;
-  background-color: white;
+  background-color: #304861;
  padding: 20px;
   text-align: center;
 
 }
 .adminUpdate h2{
   text-align: center;
-  color: #000000;
+  color: #ffffff;
 }
 .adminUpdate ul{
   list-style-type: none;
+  color: #000000;
   height: 20vh;
 }
 .adminUpdateList{
   border: 2px solid #2e588b;
+  background-color: #ffffff;
   padding-top: 1vh;
   padding-bottom: 1vh;
   margin-top: 2%;
@@ -202,7 +206,7 @@ color: #2B2F33;
   width: 15vh;
 }
 .adminCreate label{
-  color: #000000;
+  color: white;
 }
 
 @media screen and (max-width: 1374px){
