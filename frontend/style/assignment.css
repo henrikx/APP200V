@@ -79,6 +79,11 @@ main {
 
 /*styling a links and removes underline and etc*/
 
+#roles-list ul {
+    margin-bottom: 16px;
+    padding-left: 20px;
+}
+
 .roles-section a {
     display: flex;
     text-decoration: none;
