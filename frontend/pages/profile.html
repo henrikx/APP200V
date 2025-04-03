@@ -2,9 +2,17 @@
     <h2>PROFILE</h2>
 
     <div class="profile-main">
-        <div class="profile-picture">
-            <img src="/assets/default-avatar.png" alt="Profile Picture" />
-        </div>
+        <div class="profile-picture" id="profile-picture-wrapper">
+            <div class="avatar-content">
+              <label for="profile-upload">
+                <img id="profile-image" src="/assets/default-avatar.png" alt="Profile Picture"/>
+              </label>
+              <span class="profile-label">Profile Picture</span>
+            </div>
+          </div>
+          
+
+          
 
         <div class="profile-info">
             <div class="field-group">
@@ -29,16 +37,19 @@
 
     <div class="history-section">
         <h3>HISTORY</h3>
+      
         <div class="history-box">
-            <div class="shift-list" id="shift-list">
-                <!-- Shifts will be inserted here dynamically -->
-                <!-- Example entry:
-                <div class="shift-entry">
-                    <span class="shift-description">Cleaning at Office A</span>
-                    <span class="shift-hours">4 hrs</span>
-                </div>
-                -->
-            </div>
+          <div class="shift-header">
+            <span class="shift-title">Boat</span>
+            <span class="shift-date">Date</span>
+            <span class="shift-hours">Hours</span>
+          </div>
+      
+          <div class="shift-list" id="shift-list">
+            <!-- JS will inject each .shift-entry here -->
+             
+          </div>
         </div>
-    </div>
+      </div>
+      
     
