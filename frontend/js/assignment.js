@@ -37,10 +37,20 @@ async function loadAssignment(assignmentId) {
   //Updating the "name" element by retrieving it from firebase
   document.getElementById('name').innerHTML = `${name || "No name"}`;
 
-  //Converting Firestore Timestamps to local date string
+  //Converting Firestore Timestamps to local date string //fetched from overview
   if (timeStart && timeEnd) {
-    const startDate = timeStart.toDate().toLocaleDateString();
-    const endDate = timeEnd.toDate().toLocaleDateString();
+    const startDate = timeStart.toDate().toLocaleString([], {
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    const endDate = timeEnd.toDate().toLocaleString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
     document.getElementById('date').innerHTML = `${startDate} - ${endDate}`;
   } else {
     document.getElementById('date').innerHTML = `Date: No date`;
