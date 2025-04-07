@@ -110,6 +110,7 @@ main {
     border-radius: 5px;
     border: none;
     margin-top: 10px;
+    margin-right: 100px;
 }
 
 /* signup button */
@@ -131,6 +132,38 @@ main {
     background: #2E5B8B;
 }
 
+/* Justifying the div class leave section */
+.leave-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-right: 2rem;
+  }
+
+  /* leave assignment button */
+  .leave-btn {
+    background: #1E68B6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+    max-width: 200px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    flex: 1;
+  }
+  
+  .leave-btn:hover {
+    background-color: #2E5B8B;
+  }
+  
+  .button-row {
+    flex: 1;
+  }
+  
 @media (max-width: 768px) {
     .assignment-header {
         flex-direction: column;
