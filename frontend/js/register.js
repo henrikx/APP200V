@@ -8,7 +8,6 @@ import {
 import {
   getAuth,
   createUserWithEmailAndPassword,
-  onAuthStateChanged,
   signOut,
   signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
@@ -48,17 +47,9 @@ if (createUserForm) {
       });
 
       console.log("User created successfully with UID:", newUid);
-
-      // 3. Immediately sign out of that new user
-      await signOut(auth);
-
-      // 4. Sign back in as admin
-      //    (Requires storing admin credentials in code or prompting for them)
-      const adminCredential = await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
-      console.log("Signed back in as admin:", adminCredential.user.email);
-
-      // Reset the form
-      createUserForm.reset();
+      alert("User created successfully! You will now be redirected to the login page.");
+      // redirect to login
+      window.location.href = "/";
 
     } catch (error) {
       console.error("Error creating user:", error);

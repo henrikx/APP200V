@@ -1,98 +1,125 @@
 import { app } from '/js/firebase.js';
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
-  signInWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+import { UsersRepository } from '/js/repository/usersrepository.js';
 
-// Initialize auth and Firestore
 const auth = getAuth(app);
-const db = getFirestore(app);
+const usersRepo = new UsersRepository(app);
+let allUsers = []; // Store all users for filtering
+let allRoles = []; // Store all roles for selection
 
-// Hard-code or otherwise retrieve your admin's credentials:
-const ADMIN_EMAIL = "admin@example.com";
-const ADMIN_PASSWORD = "AdminPassword123";
-
-// Check auth state and toggle admin navigation visibility
+// Check auth state and load users and roles
 onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    const userDocRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userDocRef);
-
-    if (userSnap.exists()) {
-      const userData = userSnap.data();
-      console.log("User data:", userData);
-      console.log("User role:", userData.userRole);
-      if (userData.userRole === "admin") {
-        document.getElementById("adminNav").style.display = "list-item";
-      } else {
-        document.getElementById("adminNav").style.display = "none";
-      }
-    } else {
-      console.error("User document not found");
-      document.getElementById("adminNav").style.display = "none";
-    }
-  } else {
-    // If no user is signed in, redirect to login
+  if (!user) {
     window.location.href = "/login.html";
+  } else {
+    await loadRoles();
+    await loadUsers();
   }
 });
 
-// Get the create user form element
-const createUserForm = document.getElementById("createUserForm");
-if (createUserForm) {
-  createUserForm.addEventListener("submit", async (e) => {
-    e.preventDefault(); // Prevent default form submission
+// Function to populate the user dropdown
+function populateUserDropdown(users) {
+  const userListSelect = document.getElementById('adminUserListSelect');
+  userListSelect.innerHTML = ''; // Clear existing options
 
-    // Retrieve values from the form (ensure field names match your HTML)
-    const firstName = createUserForm.elements["firstName"].value;
-    const lastName = createUserForm.elements["lastName"].value;
-    const email = createUserForm.elements["email"].value;
-    const password = createUserForm.elements["password"].value;
-    const phone = createUserForm.elements["phone"].value;
-    const userRole = createUserForm.elements["userRole"].value;
+  users.forEach((user) => {
+    const role = allRoles.find((role) => role.id === user.userRole); // Find the role by ID
+    const roleName = role ? role.name : 'Unknown Role'; // Use the role name or fallback to 'Unknown Role'
 
-    try {
-      // 1. Create the new user (this will sign you in as that user)
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const newUser = userCredential.user;
-      const newUid = newUser.uid;
-
-      // 2. Store extra info in Firestore for the new user
-      await setDoc(doc(db, "users", newUid), {
-        firstName,
-        lastName,
-        email,
-        phone,
-        userRole,
-        createdAt: new Date()
-      });
-
-      console.log("User created successfully with UID:", newUid);
-
-      // 3. Immediately sign out of that new user
-      await signOut(auth);
-
-      // 4. Sign back in as admin
-      //    (Requires storing admin credentials in code or prompting for them)
-      const adminCredential = await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
-      console.log("Signed back in as admin:", adminCredential.user.email);
-
-      // Reset the form
-      createUserForm.reset();
-
-    } catch (error) {
-      console.error("Error creating user:", error);
-    }
+    const option = document.createElement('option');
+    option.value = user.id;
+    option.textContent = `${user.firstName} ${user.lastName} (${user.email}) | ${roleName}`;
+    userListSelect.appendChild(option);
   });
-} else {
-  console.error("Create user form not found.");
 }
+
+// Function to load users into the dropdown
+async function loadUsers() {
+  allUsers = await usersRepo.getUsers(); // Fetch and store all users
+  populateUserDropdown(allUsers); // Populate the dropdown with all users
+}
+
+// Function to load roles into the dropdown
+async function loadRoles() {
+  allRoles = await usersRepo.getUserRoles(); // Fetch and store all roles
+  populateEmployeeSelectBox();
+}
+
+function populateEmployeeSelectBox() {
+  const roleListSelect = document.getElementById('roleListSelect');
+  roleListSelect.innerHTML = ''; // Clear existing options
+
+  allRoles.forEach((role) => {
+    const option = document.createElement('option');
+    option.value = role.id; // Use the document ID as the value
+    option.textContent = role.name; // Assuming roles have a 'name' property
+    roleListSelect.appendChild(option);
+  });
+}
+
+// Function to update a user's role
+async function updateUser() {
+  const userListSelect = document.getElementById('adminUserListSelect');
+  const roleListSelect = document.getElementById('roleListSelect');
+  const selectedUserId = userListSelect.value;
+  const selectedRoleId = roleListSelect.value;
+
+  if (!selectedUserId) {
+    alert('Please select a user to update.');
+    return;
+  }
+
+  if (!selectedRoleId) {
+    alert('Please select a role to assign.');
+    return;
+  }
+
+  try {
+    await usersRepo.updateUserRole(selectedUserId, selectedRoleId);
+    alert('User role updated successfully.');
+    loadUsers(); // Reload the user list
+  } catch (error) {
+    alert(`Error updating user role: ${error.message}`);
+  }
+}
+
+// Function to delete a user
+async function deleteUser() {
+  const userListSelect = document.getElementById('adminUserListSelect');
+  const selectedUserId = userListSelect.value;
+
+  if (!selectedUserId) {
+    alert('Please select a user to delete.');
+    return;
+  }
+
+  const confirmDelete = confirm('Are you sure you want to delete this user?');
+  if (confirmDelete) {
+    await usersRepo.deleteUser(selectedUserId);
+    alert('User deleted successfully.');
+    loadUsers(); // Reload the user list
+  }
+}
+
+// Function to filter users based on search input
+function filterUsers() {
+  const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+  // Filter users based on the search input
+  const filteredUsers = allUsers.filter((user) =>
+    user.firstName.toLowerCase().includes(searchInput) ||
+    user.lastName.toLowerCase().includes(searchInput) ||
+    user.email.toLowerCase().includes(searchInput)
+  );
+
+  // Populate the dropdown with filtered users
+  populateUserDropdown(filteredUsers);
+}
+
+// Attach event listeners to buttons
+document.getElementById('changeRoleButton').addEventListener('click', updateUser);
+document.getElementById('deleteUserButton').addEventListener('click', deleteUser);
+document.querySelector('.adminUpdate form').addEventListener('submit', (e) => {
+  e.preventDefault(); // Prevent form submission
+  filterUsers(); // Trigger the search functionality
+});

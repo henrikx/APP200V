@@ -2,31 +2,31 @@
     <h1 style="text-align: center; margin-top: 20px;">Management</h1>
 </header>
 <main>
-    <div class="adminUser">
-    
-
-    
-        <div class="adminUpdate">
-            <h2>Update user</h2>
-            <form action="./search">
-                 <input type="text" id="" placeholder="Find a user" onkeyup="FUNKSJONEN()"> 
+    <div class="adminUpdate">
+        <h2>Update user</h2>
+        <form action="">
+            <div class="adminSearchUser">
+                <label for="searchInput">Search for a user:</label>
+                <input type="text" id="searchInput" placeholder="Find a user"> 
                 <button type="submit">Search</button>
-                        <p>Userlist</p>
-                <div class="adminUpdateList">
-    
-                 <!--Liste som skal byttes ut med DB info -->
-                    <ul id="userList">
-                        <li>Ola Nordmann</li>
-                        <li>Kari Nordmann</li>
-                        <li>Bruker 3</li>
-                         <li>Bruker 4</li>
-                     </ul>
-    
+            </div>
+            <div class="adminUsers">
+                <div class="adminUserList">
+                    <select size="15" id="adminUserListSelect" class="adminUserListSelect">
+                        <!-- List populated dynamically -->
+                    </select>
                 </div>
-    
-                    <button>Change role</button>
-                    <button>Delete user</button>
-            </form>
-        </div>
+                <div class="adminUsersControlSection">
+                    <div class="adminRoleList">
+                        <select id="roleListSelect" class="roleListSelect">
+                            <!-- Roles will be dynamically added here -->
+                        </select>
+                        <button type="button" id="changeRoleButton">Change role</button>
+                    </div>
+                    <button type="button" id="deleteUserButton">Delete user</button>
+                </div>
+
+            </div>
+        </form>
     </div>
 </main>
