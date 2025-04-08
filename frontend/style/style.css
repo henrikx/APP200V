@@ -101,24 +101,6 @@ color: #242D36;
 color: #2B2F33;
 }
 
-#create-job-card {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 20px;
-  background-color: #006ce0;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1000;
-  width: auto;
-}
-
-#create-job-card:hover {
-  background-color: #1e68b6;
-}
-
 .adminUser{
   display: grid;
   grid-template-columns: 1fr 1fr;
