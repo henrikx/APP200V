@@ -28,43 +28,69 @@ main {
 
 /* assignment header */
 .assignment-header {
+    display: flex;
+    justify-content: space-between; 
+    align-items: flex-start;        
     background: #304861;
     border-radius: 10px;
     padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 20px;
-}
+  }
 
 .assignment-info {
     display: flex;
-    flex-direction: column;
-}
+    flex-direction: column; 
+    gap: 10px; 
+  }
 
+.assignment-info h3 {
+    margin: 0;
+}
 .capacity-header {
     font-size: 20px;
     font-weight: bold;
+    margin: 0;
 }
 
-/* vehicles & Roles side by side so it is easier to read */
-.vehicle-roles-wrapper {
+/* assignment & Roles side by side so it is easier to read */
+.assignment-wrapper {
     display: flex;
     gap: 20px; 
     margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
-/* vehicle & roles sections */
-.vehicle-section,
+/* assignment */
+.assignment-section {
+    background: #1E293B;
+    border-radius: 10px;
+    padding: 20px;
+    flex: 1;                
+    min-width: 280px;        
+}
+/*roles sections */
 .roles-section {
     background: #1E293B;
     border-radius: 10px;
     padding: 20px;
     flex: 1;                
-    min-width: 280px;       
+    min-width: 280px;
 }
 
-.vehicle-section h3, .roles-section h3 {
+/*styling a links and removes underline and etc*/
+
+#roles-list ul {
+    margin-bottom: 16px;
+    padding-left: 20px;
+}
+
+.roles-section a {
+    display: flex;
+    text-decoration: none;
+    color: white;
+}
+
+.assignment-section h3, .roles-section h3 {
     text-align: center;
 }
 
@@ -84,6 +110,7 @@ main {
     border-radius: 5px;
     border: none;
     margin-top: 10px;
+    margin-right: 100px;
 }
 
 /* signup button */
@@ -105,6 +132,38 @@ main {
     background: #2E5B8B;
 }
 
+/* Justifying the div class leave section */
+.leave-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-right: 2rem;
+  }
+
+  /* leave assignment button */
+  .leave-btn {
+    background: #1E68B6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+    max-width: 200px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    flex: 1;
+  }
+  
+  .leave-btn:hover {
+    background-color: #2E5B8B;
+  }
+  
+  .button-row {
+    flex: 1;
+  }
+  
 @media (max-width: 768px) {
     .assignment-header {
         flex-direction: column;

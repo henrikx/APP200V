@@ -1,52 +1,52 @@
 <header class="navbar">
-    <h2>Assignment Details</h2>
-    <!-- the button loads a new instance with window.location-->
-    <!-- so i need to set the css here too so that it loads for each job card-->
-    
-  </header>
-  
-  <main>
-    <!-- Assignment Header -->
-    <div class="assignment-header">
-      <div class="assignment-info">
-        <h3 id="boatName">🚢 Boat:</h3>
-        <h3 id="boatDate">📅 Date:</h3>
-      </div>
-      <p class="capacity-header" id="capacity">👥 Capacity:</p>
+  <h2>Assignment Details</h2>
+</header>
+
+<main>
+  <!-- Assignment Header -->
+  <div class="assignment-header">
+    <div class="assignment-info">
+      <h3>Assignment: <span id="name"></span></h3>
+      <h3>Date: <span id="date"></span></h3>
     </div>
-  
-    <!-- Vehicles & Roles side by side in wrappers -->
-    <div class="vehicle-roles-wrapper">
-      <!-- Vehicles-section -->
-      <div class="vehicle-section">
-        <h3>🚗 Vehicles</h3><hr><br>
-        <p id="cars">Cars:</p><br>
-        <p id="hh">HH:</p> 
-      </div>
-  
-      <!-- Roles-section -->
-      <div class="roles-section">
-        <h3>👥 Roles</h3><hr><br>
-        <p id="formann">Formann:</p><br>
-        <p id="nestformann">Nestformann:</p><br>
-        <p id="mottakere">Mottakere:</p><br>
-        <p id="folgebilsjaforer">Følgebilsjåfører:</p><br>
-        <p id="sjaforer">Sjåfører:</p><br>
+    <p class="capacity-header" id="capacity">
+      Capacity: <span id="capData"></span>
+    </p>
+  </div>
+
+  <!-- Assignment & Roles side by side in wrappers -->
+  <div class="assignment-wrapper">
+    <!-- Assignment-section -->
+    <div class="assignment-section">
+      <h3>Subtask</h3>
+      <hr><br>
+      <p id="cars">Cars:</p><br>
+      <p id="hh">HH:</p>
+    </div>
+
+    <!-- Roles-section -->
+    <div class="roles-section">
+      <h3>Roles</h3>
+      <hr><br>
+      <div id="roles-list">
       </div>
     </div>
-  
+
     <!-- Signup-section -->
     <div class="signup-section">
-      <h3>📝 Sign up for assignment</h3>
+      <h3>Sign up for assignment</h3>
       <label for="roleSelect">Choose position:</label>
       <select id="roleSelect">
-        <option value="formann">👤 Formann</option>
-        <option value="nestformann">👥 Nestformann</option>
-        <option value="mottakere">📋 Mottakere</option>
-        <option value="følgebilsjåfører">🚘 Følgebilsjåfører</option>
-        <option value="sjåfører">🚗 Sjåfører</option>
+        <option value="Foreman">Foreman</option>
+        <option value="Nextforeman">Nextforeman</option>
+        <option value="Receiver">Receiver</option>
+        <option value="FollowDriver">FollowDriver</option>
+        <option value="Driver">Driver</option>
       </select>
       <button class="signup-btn">Sign up</button>
     </div>
-  </main>
-  
+    <div class="button-row">
+      <button class="leave-btn">Leave Assignment</button>
+    </div>
+  </div>
+</main>
