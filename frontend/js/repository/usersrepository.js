@@ -3,10 +3,7 @@ import {
   collection,
   getDocs,
   getDoc,
-  query,
-  where,
   doc,
-  getDoc,
   setDoc,
   deleteDoc
 } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";

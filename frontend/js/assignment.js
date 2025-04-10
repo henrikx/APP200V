@@ -1,7 +1,7 @@
 import { app } from "/js/firebase.js";
 import { AssignmentsRepository } from "/js/repository/assignmentsrepository.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
-import { UserRepository } from "/js/repository/usersrepository.js";
+import { UsersRepository } from "/js/repository/usersrepository.js";
 import { getFirestore, addDoc, collection, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
 
@@ -9,7 +9,7 @@ import { getFirestore, addDoc, collection, deleteDoc, doc } from "https://www.gs
 const auth = getAuth(app);
 const db = getFirestore(app);
 const assignmentsRepository = new AssignmentsRepository(app);
-const usersrepository = new UserRepository(app);
+const usersrepository = new UsersRepository(app);
 
 // Listen for changes in authentication state and load assignments when the user is logged in
 onAuthStateChanged(auth, async (user) => {
