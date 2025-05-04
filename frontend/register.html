@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/style/style.css">
+        <title>App200</title>
+    </head>
+    <body class="loginBackRound">
+        <main>
+            <div class="registerContainer">    
+                <h2>Create user</h2>
+                <form action="" id="createUserForm">
+                    <input type="text" placeholder="First name" name="firstName">
+                    <input type="text" placeholder="Last name" name="lastName" id=""><br>
+                    <input type="email" placeholder="Email" name="email" id="">
+                    <input type="password" placeholder="Password" name="password" id="">
+                    <input type="tel" placeholder="Phone number" name="phone">
+                        <label for="userRole">Select a role for the user</label>
+                        <select id="userRole"  name="userRole">
+                            <option value="admin">Admin</option>
+                            <option value="user" selected>User</option>                
+                  </select>
+                  <button type="submit"> Create user</button>
+                </form>
+            </div>
+        </main>
+        <script type="module" src="/js/register.js"></script>
+    </body>
+</html>
