@@ -13,19 +13,6 @@ document.addEventListener('DOMContentLoaded', function () { // Run script on pag
                 script.src = `/js/${pageName}.js`;
                 script.type = 'module';
                 document.body.appendChild(script);
-
-                //need to load burger menu here since i dont put the script
-                //inside index.html
-                const burger = document.getElementById("burgerMenu");
-                const navLinks = document.getElementById("navLinks");
-
-                if (burger && navLinks) {
-                    burger.addEventListener("click", () => {
-                        navLinks.classList.toggle("active");
-                        burger.classList.toggle("toggle");
-                    });
-                }
-
             })
             .catch(error => console.error('Error loading page:', error)); // log errors to the console
     }

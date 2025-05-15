@@ -10,7 +10,8 @@
   border-width: 1px;
   
 }
-.LogInContainer h2, .LogInContainer h4, .LogInContainer input, .LogInContainer button{
+.LogInContainer h2, .LogInContainer h4, .LogInContainer input, .LogInContainer button,
+#createUserForm h2, #createUserForm h4, #createUserForm input, #createUserForm button{
   padding: 2%;
   margin: 2%;
   width: 90%;
@@ -36,13 +37,15 @@ button{
 }
 
 @media screen and (min-width: 1374px){
-  .LogInContainer{
+  .LogInContainer, .registerContainer{
     border: 2px solid #2e588b;
     width: 20%;
     border-width: 1px;
     padding: 1%;
   }
-  .LogInContainer h2, .LogInContainer h4, .LogInContainer input, .LogInContainer button{
+  .LogInContainer h2, .LogInContainer h4, .LogInContainer input, .LogInContainer button,
+  #createUserForm h2, #createUserForm h4, #createUserForm input, #createUserForm button
+  {
     padding: 2%;
     margin: 2%;
     width: 80%;
@@ -55,7 +58,7 @@ button{
   }
 }
 
-.LogInContainer{
+.LogInContainer, .registerContainer{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -73,10 +76,24 @@ button{
   padding-bottom: 60px;
 }
 
+#createUserForm{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  margin-left: auto;
+  margin-right: auto;
+  color: white;
+  background-color: #2e588b;
+  border-radius: 25px;
+  width: 100%;
+}
+
 .Center{
   text-align: center;
 }
-.LogInContainer button{
+.LogInContainer button, #createUserForm button{
   color: white;
   background-color: #2e588b;
   border-radius: 4px;

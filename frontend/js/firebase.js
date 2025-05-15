@@ -1,4 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+
   // Configuration fetched from firebase console
   
   // Import the functions you need from the SDKs you need
@@ -28,9 +30,19 @@ const firebaseConfig = {
 
 };
 
+function signOut() {
+  const auth = getAuth(app);
+  auth.signOut().then(() => {
+      console.log("User signed out successfully.");
+      window.location.href = "/login.html";
+  }).catch((error) => {
+      console.error("Error signing out:", error);
+  });
+}
+
 
 // Initialize Firebase
 
 const app = initializeApp(firebaseConfig);
 
-export { app };
+export { app, signOut };

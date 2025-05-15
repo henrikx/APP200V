@@ -1,6 +1,16 @@
 import { app } from '/js/firebase.js';
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        console.error("No user is signed in.");
+        console.log("Redirecting to login page...");
+        window.location.href = "/index.html?page=overview";
+        return;
+    }
+});
 
 function handleLoginButton()
 {

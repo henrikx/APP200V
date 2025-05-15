@@ -10,19 +10,12 @@
     <body class="loginBackRound">
         <main>
             <div class="registerContainer">    
-                <h2>Create user</h2>
+                <h2>Register user</h2>
                 <form action="" id="createUserForm">
-                    <input type="text" placeholder="First name" name="firstName">
-                    <input type="text" placeholder="Last name" name="lastName" id=""><br>
                     <input type="email" placeholder="Email" name="email" id="">
                     <input type="password" placeholder="Password" name="password" id="">
-                    <input type="tel" placeholder="Phone number" name="phone">
-                        <label for="userRole">Select a role for the user</label>
-                        <select id="userRole"  name="userRole">
-                            <option value="admin">Admin</option>
-                            <option value="user" selected>User</option>                
-                  </select>
-                  <button type="submit"> Create user</button>
+                    <button type="submit">Register account</button>
+                    <button type="button" onclick="window.location.href='/login.html'">Cancel and go back to login</button>
                 </form>
             </div>
         </main>
