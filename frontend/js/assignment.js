@@ -46,7 +46,7 @@ async function loadAssignment(assignmentId) {
       hour: '2-digit',
       minute: '2-digit'
     });
-    
+
     const endDate = timeEnd.toDate().toLocaleString([], {
       hour: '2-digit',
       minute: '2-digit'
@@ -178,6 +178,12 @@ async function loadAssignment(assignmentId) {
       console.error("Error leaving assignment:", error);
     }
   };
+}
+
+//BackButton to go back to overview page
+const backBtn = document.getElementById('back-to-overview');
+if (backBtn) {
+  backBtn.onclick = () => window.location.href = "/?page=overview";
 }
 
 window.expandRolesSection = function (roleName) {
