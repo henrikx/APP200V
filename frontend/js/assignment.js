@@ -94,7 +94,7 @@ async function loadAssignment(assignmentId) {
   });
 
   // Event listener for sign up button
-  document.querySelector('.signup-btn').addEventListener('click', async () => {
+  document.querySelector('.signup-btn').onclick = async () => {
     try {
       // Get the selected role value from the dropdown
       const roleSelect = document.getElementById('roleSelect');
@@ -147,11 +147,11 @@ async function loadAssignment(assignmentId) {
     } catch (error) {
       console.error("Error signing up user for role:", error);
     }
-  });
+  };
 
   // LEAVE ASSIGNMENT - SECTION
   // Create event listener so the user signed up can also leave the assignment if needed
-  document.querySelector('.leave-btn').addEventListener('click', async () => {
+  document.querySelector('.leave-btn').onclick = async () => {
     try {
       const currentUserId = auth.currentUser.uid;
       // use userAssignmentsMap to find the user related to the document
@@ -177,7 +177,7 @@ async function loadAssignment(assignmentId) {
     } catch (error) {
       console.error("Error leaving assignment:", error);
     }
-  });
+  };
 }
 
 window.expandRolesSection = function (roleName) {
