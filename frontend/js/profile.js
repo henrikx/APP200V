@@ -3,26 +3,22 @@ import { app } from '/js/firebase.js';
 import {
   getAuth,
   onAuthStateChanged,
-  updateEmail,
+  verifyBeforeUpdateEmail,
   updatePassword,
   sendEmailVerification,
   EmailAuthProvider,
   reauthenticateWithCredential
 } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  doc,
-  getDoc,
-  query,
-  where,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+import { UsersRepository } from './repository/usersrepository.js';
+import { AssignmentsRepository } from './repository/assignmentsrepository.js';
+
 
 const auth = getAuth(app);
-const db = getFirestore(app);
+const usersRepo = new UsersRepository(app);
+const assignmentsRepo = new AssignmentsRepository(app);
+
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) return;
@@ -30,37 +26,36 @@ onAuthStateChanged(auth, async (user) => {
   const shiftList = document.getElementById("shift-list");
   shiftList.innerHTML = "";
 
-  const userAssignmentsQuery = query(
-    collection(db, "userAssignment"),
-    where("userId", "==", user.uid)
-  );
+  // Get all user assignments for this user
+  // We'll use assignmentsRepo.getAssignments() to get all assignments, roles, and user assignments
+  const [assignmentsMap, , , , userAssignmentMap] = await assignmentsRepo.getAssignments();
 
-  const userAssignmentsSnapshot = await getDocs(userAssignmentsQuery);
+  // Find all assignments for this user
+  // userAssignmentMap is { [assignmentId]: { [userAssignmentId]: userAssignmentData } }
+  for (const assignmentId in userAssignmentMap) {
+    const userAssignments = userAssignmentMap[assignmentId];
+    for (const uaId in userAssignments) {
+      const ua = userAssignments[uaId];
+      if (ua.userId !== user.uid) continue;
 
-  for (const docSnap of userAssignmentsSnapshot.docs) {
-    const ua = docSnap.data();
-    const assignmentId = ua.assignmentId;
+      const assignment = assignmentsMap[assignmentId];
+      if (!assignment) continue;
+      const assignmentName = assignment.name || "Unknown Assignment";
 
-    const assignmentRef = doc(db, "assignments", assignmentId);
-    const assignmentSnap = await getDoc(assignmentRef);
-    if (!assignmentSnap.exists()) continue;
+      const start = new Date(assignment.timeStart?.toDate?.() ?? assignment.timeStart);
+      const end = new Date(assignment.timeEnd?.toDate?.() ?? assignment.timeEnd);
+      const date = start.toLocaleDateString();
+      const hours = Math.round((end - start) / (1000 * 60 * 60));
 
-    const assignment = assignmentSnap.data();
-    const boatName = assignment.name || "Unknown Boat";
-
-    const start = new Date(assignment.timeStart?.toDate?.() ?? assignment.timeStart);
-    const end = new Date(assignment.timeEnd?.toDate?.() ?? assignment.timeEnd);
-    const date = start.toLocaleDateString();
-    const hours = Math.round((end - start) / (1000 * 60 * 60));
-
-    const shiftItem = document.createElement("div");
-    shiftItem.className = "shift-entry";
-    shiftItem.innerHTML = `
-      <span class="shift-title">${boatName}</span>
-      <span class="shift-date">${date}</span>
-      <span class="shift-hours">${hours} hrs</span>
-    `;
-    shiftList.appendChild(shiftItem);
+      const shiftItem = document.createElement("div");
+      shiftItem.className = "shift-entry";
+      shiftItem.innerHTML = `
+        <span class="shift-title">${assignmentName}</span>
+        <span class="shift-date">${date}</span>
+        <span class="shift-hours">${hours} hrs</span>
+      `;
+      shiftList.appendChild(shiftItem);
+    }
   }
 });
 
@@ -90,15 +85,16 @@ window.submitChange = async function (field) {
     await reauthenticateUser(currentPassword);
 
     if (field === "email") {
-      await updateEmail(user, newValue);
+      await verifyBeforeUpdateEmail(user, newValue);
       await sendEmailVerification(user);
       alert("Email updated! Please verify it using the link sent to your inbox.");
+      await usersRepo.updateUser(user.uid, { email: newValue });
     } else if (field === "password") {
       await updatePassword(user, newValue);
       alert("Password updated!");
     } else if (field === "phone") {
-      const userDoc = doc(db, "users", user.uid);
-      await updateDoc(userDoc, { phoneNumber: newValue });
+      // Use UsersRepository general updateUser method
+      await usersRepo.updateUser(user.uid, { phoneNumber: newValue });
       alert("Phone number updated!");
     }
   } catch (err) {
