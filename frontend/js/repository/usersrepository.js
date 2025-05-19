@@ -57,12 +57,12 @@ class UsersRepository {
     await deleteDoc(userDocRef);
   }
 
-  // Delete a user from the Firestore 'users' collection
-  async deleteUser(userId) {
+  // General method to update user fields
+  async updateUser(userId, updateObj) {
     const userDocRef = doc(this.db, 'users', userId);
-    await deleteDoc(userDocRef);
+    await setDoc(userDocRef, updateObj, { merge: true });
   }
-      // Fetch all roles from the Firestore 'userroles' collection
+  // Fetch all roles from the Firestore 'userroles' collection
   async getUserRoles() {
     const rolesSnapshot = await getDocs(collection(this.db, 'userroles'));
     const roles = [];

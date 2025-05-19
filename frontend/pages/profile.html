@@ -1,70 +1,55 @@
-<div class="adminCreate" style="max-width: 1000px; margin: 90px auto;">
+<div class="profile-container">
+    <h2>PROFILE</h2>
 
-  <h2 class="Center">User Profile</h2>
-  
-  
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+    <div class="profile-main">
+        <div class="profile-picture" id="profile-picture-wrapper">
+            <div class="avatar-content">
+              <label for="profile-upload">
+                <img id="profile-image" src="/assets/default-avatar.png" alt="Profile Picture"/>
+              </label>
+              <span class="profile-label">Profile Picture</span>
+            </div>
+          </div>
+          
 
-    <div class="user-info" style="text-align: left;">
-      <p><strong>Username:</strong> user123</p>
-      <p><strong>Email:</strong> user123@example.com</p>
-      <p><strong>Mobile:</strong> +47 123 45 678</p>
+          
+
+        <div class="profile-info">
+            <div class="field-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter new password" />
+                <button onclick="submitChange('password')">Change</button>
+            </div>
+
+            <div class="field-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter new email" />
+                <button onclick="submitChange('email')">Change</button>
+            </div>
+
+            <div class="field-group">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" placeholder="Enter new phone number" />
+                <button onclick="submitChange('phone')">Change</button>
+            </div>
+        </div>
     </div>
 
+    <div class="history-section">
+        <h3>HISTORY</h3>
+      
+        <div class="history-box">
+          <div class="shift-header">
+            <span class="shift-title">Boat</span>
+            <span class="shift-date">Date</span>
+            <span class="shift-hours">Hours</span>
+          </div>
+      
+          <div class="shift-list" id="shift-list">
+            <!-- JS will inject each .shift-entry here -->
+             
+          </div>
+        </div>
+      </div>
+      
     
-    <div style="text-align: center; border: 2px dashed #ccc; padding: 1rem; border-radius: 8px;">
-      <img src="placeholder.jpg" alt="Profile Preview" 
-           style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem;">
-      <h3 class="Center" style="margin-bottom: 1rem;">Profile</h3>
-      <label style="cursor: pointer; background-color: #304861; padding: 0.5rem 1rem; border-radius: 4px; color: white;">
-        Upload Photo
-        <input type="file" 
-               accept="image/*" 
-               style="display: none;"
-               id="profile-upload"
-               onchange="validateImage(this)">
-      </label>
-      <div id="image-error" style="color: red; margin-top: 0.5rem; display: none;"></div>
-    </div>
-  </div>
-
- 
-  <h3 class="Center" style="margin-bottom: 1rem;">New password</h3>
-  <input
-    type="password"
-    id="new-password"
-    name="New-password"
-    placeholder="New password"
-    style="width: 100%; margin-bottom: 1rem;"
-  />
-  
-  <h3 class="Center" style="margin-bottom: 1rem;">Confirm password</h3>
-  <input
-    type="password"
-    id="confirm-password"
-    name="confirm-password"
-    placeholder="Confirm password"
-    style="width: 100%; margin-bottom: 1rem;"
-  />
-  
-  <h3 class="Center" style="margin-bottom: 1rem;">Change password</h3>
-  <button
-    id="change-password-btn"
-    class="LoginButton1"
-    style="margin-top: 0.5rem; width: 100%;"
-  >
-    Change password
-  </button>
-</div>
-
-<div class="adminCreate">
-  <h3 class="center">Employee History</h3>
-  <ul>
-    <li>Position: </li>
-    <li>Amount of hours worked: </li>
-  </ul>
-</div>
-
-
-<script src="script.js"></script>
-</body>
