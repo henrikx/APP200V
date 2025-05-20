@@ -182,24 +182,24 @@ header h1 {
   max-width: 300px;
 }
 
-/* hover effect */
-#create-job-card:hover {
-  background-color: #1e68b6;
+.create-job-link {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #006CE0; /* fra fargepaletten din */
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.2s;
 }
 
-/* Responsive button layout so it drops to the bottom of the page
- and not across the whole page as it was
-*/
-@media (max-width: 768px) {
-  #create-job-card {
-    position: static;
-    margin: 2rem auto 1rem auto;
-    display: block;
-    width: 90%;
-    max-width: 300px;
-    text-align: center;
-  }
+.create-job-link:hover {
+    background-color: #1e68b6;
 }
+
 
 /* responsive adjustments */
 @media (max-width: 1200px) {
