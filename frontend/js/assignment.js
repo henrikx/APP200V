@@ -46,7 +46,7 @@ async function loadAssignment(assignmentId) {
       hour: '2-digit',
       minute: '2-digit'
     });
-    
+
     const endDate = timeEnd.toDate().toLocaleString([], {
       hour: '2-digit',
       minute: '2-digit'
@@ -58,13 +58,28 @@ async function loadAssignment(assignmentId) {
   //Updating the capacity element with the correct information by id
   document.getElementById('capData').innerHTML = `${usedCount} / ${totalCap}`;
 
-  //Clear old roles list
-  document.getElementById('roles-list').innerHTML = "";
+    // Clear old roles list
+  const rolesListEl = document.getElementById('roles-list');
+  rolesListEl.innerHTML = "";
 
-  Object.entries(assignmentRolesMap[assignmentId]).forEach(async ([roleId, roleData]) => {
+  // Figure out which roles actually have someone signed up
+  const assignedRoleIds = new Set(
+    Object.values(userAssignmentMap[assignmentId]).map(ua => ua.assignmentRoleId)
+  );
+
+  // If no one has signed up yet, show a placeholder
+  if (!assignedRoleIds.size) {
+    rolesListEl.innerHTML = `<p>No one has signed up for any role yet.</p>`;
+  }
+
+  // Render only those roles that have at least one signup
+  Object.entries(assignmentRolesMap[assignmentId]).forEach(([roleId, roleData]) => {
+    // Skip any role with zero sign-ups
+    if (!assignedRoleIds.has(roleId)) return;
+
     // Adder hver rolle til listen som en link
-    document.getElementById('roles-list').innerHTML += `
-      <a id="${roleData.name}" href="#" onclick="expandRolesSection('${roleData.name}');">
+    rolesListEl.innerHTML += `
+      <a href="#" onclick="expandRolesSection('${roleData.name}');">
         <span id="${roleData.name}-span">▲</span> ${roleData.name}
       </a><br>`;
 
@@ -72,29 +87,34 @@ async function loadAssignment(assignmentId) {
     //so that the users gets added to their respective ul on signing up
     document.getElementById('roles-list').innerHTML += `
       <ul id="${roleData.name}-list" style="display: none;"></ul>`;
-
-    // Loop through userAssignments and add users to the correct role
-    Object.entries(userAssignmentMap[assignmentId]).forEach(async ([userAssignmentId, userAssignment]) => {
-      try {
-        if (userAssignment.assignmentRoleId !== roleId) return;
-
-        const user = await usersrepository.getUser(userAssignment.userId);
-        const userFullName = `${user.firstName} ${user.lastName}` || "Unknown User";
-
-        const listElement = document.getElementById(`${roleData.name}-list`);
-        if (listElement) {
-          const li = document.createElement("li");
-          li.textContent = userFullName;
-          listElement.appendChild(li);
-        }
-      } catch (error) {
-        console.error(`Error fetching user for ${roleData.name}:`, error);
-      }
-    });
   });
 
+  // Loop through userAssignments and add users to the correct role
+  Object.entries(userAssignmentMap[assignmentId]).forEach(async ([userAssignmentId, userAssignment]) => {
+    try {
+      // Only populate users for roles we rendered above
+      if (!assignedRoleIds.has(userAssignment.assignmentRoleId)) return;
+
+      const user = await usersrepository.getUser(userAssignment.userId);
+      const userFullName = `${user.firstName} ${user.lastName}` || "Unknown User";
+
+      const listElement = document.getElementById(
+        `${assignmentRolesMap[assignmentId][userAssignment.assignmentRoleId].name}-list`
+      );
+      if (listElement) {
+        const li = document.createElement("li");
+        li.textContent = userFullName;
+        listElement.appendChild(li);
+      }
+    } catch (error) {
+      console.error(`Error fetching user for ${roleData.name}:`, error);
+    }
+  });
+
+
+
   // Event listener for sign up button
-  document.querySelector('.signup-btn').addEventListener('click', async () => {
+  document.querySelector('.signup-btn').onclick = async () => {
     try {
       // Get the selected role value from the dropdown
       const roleSelect = document.getElementById('roleSelect');
@@ -147,11 +167,11 @@ async function loadAssignment(assignmentId) {
     } catch (error) {
       console.error("Error signing up user for role:", error);
     }
-  });
+  };
 
   // LEAVE ASSIGNMENT - SECTION
   // Create event listener so the user signed up can also leave the assignment if needed
-  document.querySelector('.leave-btn').addEventListener('click', async () => {
+  document.querySelector('.leave-btn').onclick = async () => {
     try {
       const currentUserId = auth.currentUser.uid;
       // use userAssignmentsMap to find the user related to the document
@@ -177,7 +197,13 @@ async function loadAssignment(assignmentId) {
     } catch (error) {
       console.error("Error leaving assignment:", error);
     }
-  });
+  };
+}
+
+//BackButton to go back to overview page
+const backBtn = document.getElementById('back-to-overview');
+if (backBtn) {
+  backBtn.onclick = () => window.location.href = "/?page=overview";
 }
 
 window.expandRolesSection = function (roleName) {
@@ -187,6 +213,6 @@ window.expandRolesSection = function (roleName) {
   const listElement = document.getElementById(roleName + "-list");
   if (listElement) {
     listElement.style.display = listElement.style.display === "none" ? "block" : "none";
-    spanElement.innerHTML = listElement.style.display === "none" ? "▼" : "▲";
+    spanElement.innerHTML = listElement.style.display === "none" ? "▲" : "▼";
   }
 }

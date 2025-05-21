@@ -163,6 +163,29 @@ main {
   .button-row {
     flex: 1;
   }
+
+   /* back button */
+  .back-btn {
+    background: #1E68B6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+    max-width: 200px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    flex: 1;
+  }
+  
+  .back-btn:hover {
+    background-color: #2E5B8B;
+  }
+  
+  .button-row {
+    flex: 1;
+  }
   
 @media (max-width: 768px) {
     .assignment-header {
