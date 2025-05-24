@@ -1,0 +1,85 @@
+.adminUser{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10%;
+  }
+  
+  .adminUsers {
+    display: flex;
+  }
+  
+  
+  .adminRoleList {
+    display: flex;
+  }
+  
+  .adminUsersControlSection select, .adminUsersControlSection button {
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 5px;
+    width: calc(100% - 10px);
+  }
+  
+  .adminUpdate{
+    border: 2px solid #2e588b;
+    background-color: #304861;
+    padding: 20px;
+    text-align: center;
+  
+  }
+  
+  .adminSearchUser {
+    display: flex;
+  }
+  
+  .adminSearchUser label {
+    width: 200px;
+    align-self: center;
+  }
+  
+  .adminSearchUser button {
+    width: 200px;
+    height: 50px;
+    align-self: center;
+  }
+  
+  .adminSearchUser input {
+    margin: 50px;
+    padding: 10px;
+  }
+  
+  
+  .adminUsersControlSection {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .adminUpdate h2{
+    text-align: center;
+    color: #ffffff;
+  }
+  
+  .adminCreate label{
+    color: white;
+  }
+  
+  .adminUserList {
+    width: 100%;
+  }
+  
+  .adminUserListSelect {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  @media screen and (max-width: 1374px){
+  
+    .adminUsers{
+      flex-direction: column;
+    }
+  
+    .adminSearchUser input{
+      margin: 0px;
+    }
+  }
