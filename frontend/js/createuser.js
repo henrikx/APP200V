@@ -32,7 +32,7 @@ if (createUserForm) {
     const firstName = createUserForm.elements["firstName"].value;
     const lastName = createUserForm.elements["lastName"].value;
     const email = createUserForm.elements["email"].value;
-    const phone = createUserForm.elements["phone"].value;
+    const phoneNumber = createUserForm.elements["phone"].value;
     
     // Check that no fields are empty
     if (!firstName || !lastName || !email || !phone) {
@@ -45,7 +45,7 @@ if (createUserForm) {
         firstName,
         lastName,
         email,
-        phone,
+        phoneNumber,
         userRole,
         createdAt: new Date()
       });
