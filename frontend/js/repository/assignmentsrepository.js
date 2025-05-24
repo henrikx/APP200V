@@ -3,7 +3,9 @@ import {
   collection,
   getDocs,
   getDoc,
+  addDoc,
   doc,
+  deleteDoc,
   query,
   where
 } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
@@ -11,6 +13,19 @@ import {
 class AssignmentsRepository {
     constructor(app) {
         this.db = getFirestore(app);
+    }
+
+    // Add a user assignment (sign up user for a role in an assignment)
+    async addUserAssignment(data) {
+        // data: { assignmentId, assignmentRoleId, userId, roleName }
+        const db = this.db;
+        await addDoc(collection(db, "userAssignment"), data);
+    }
+
+    // Delete a user assignment (user leaves an assignment)
+    async deleteUserAssignment(userAssignmentDocId) {
+        const db = this.db;
+        await deleteDoc(doc(db, "userAssignment", userAssignmentDocId));
     }
 
     async getAssignments(assignmentId = null) {

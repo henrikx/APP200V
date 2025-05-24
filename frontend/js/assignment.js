@@ -1,33 +1,32 @@
+
 import { app } from "/js/firebase.js";
 import { AssignmentsRepository } from "/js/repository/assignmentsrepository.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 import { UsersRepository } from "/js/repository/usersrepository.js";
-import { getFirestore, addDoc, collection, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
 
-// initialize Firebase Authentication
-const auth = getAuth(app);
-const db = getFirestore(app);
+// Use repositories only, no direct firebase usage
 const assignmentsRepository = new AssignmentsRepository(app);
 const usersrepository = new UsersRepository(app);
 
-// Listen for changes in authentication state and load assignments when the user is logged in
+
+// Helper to get current user from firebase auth (for now, still using firebase auth for userId)
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+const auth = getAuth(app);
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    // Show the user's email (if the element exists)
     const usernameElem = document.getElementById("username");
     if (usernameElem) {
       usernameElem.textContent = user.email;
     }
-    const params = new URLSearchParams(window.location.search); // Get array with query-params
-    const assignmentId = params.get('id'); // Get query-parameter "page"
-    await loadAssignment(assignmentId);
+    const params = new URLSearchParams(window.location.search);
+    const assignmentId = params.get('id');
+    await loadAssignment(assignmentId, user.uid);
   } else {
     console.log("No user is signed in.");
   }
 });
 
-async function loadAssignment(assignmentId) {
+async function loadAssignment(assignmentId, currentUserId) {
   // Fetch assignments, assignment roles, and user assignments concurrently
   const [assignmentsMap, assignmentCapacityMap, assignmentUsageMap, assignmentRolesMap, userAssignmentMap] = await assignmentsRepository.getAssignments(assignmentId);
   const { name, description, timeStart, timeEnd } = assignmentsMap[assignmentId];
@@ -110,9 +109,10 @@ async function loadAssignment(assignmentId) {
         listElement.appendChild(li);
       }
     } catch (error) {
-      console.error(`Error fetching user for ${roleData.name}:`, error);
+      console.error(`Error fetching user for role:`, error);
     }
   });
+
 
 
 
@@ -121,15 +121,13 @@ async function loadAssignment(assignmentId) {
     try {
       // Get the selected role value from the dropdown
       const roleSelect = document.getElementById('roleSelect');
-      const chosenRole = roleSelect.value; //needs to match exact field in the firestore database
+      const chosenRole = roleSelect.value;
 
       // Find the matching role doc Id from assignmentRolesMap
       let chosenRoleDocId = null;
       let chosenRoleData = null;
       if (assignmentRolesMap && assignmentRolesMap[assignmentId]) {
         Object.entries(assignmentRolesMap[assignmentId]).forEach(([roleId, roleData]) => {
-          // Compare role names case-insensitively so we dont get problems with
-          // firebase since it is case-sensitive
           if (roleData && roleData.name && roleData.name.toLowerCase() === chosenRole.toLowerCase()) {
             chosenRoleDocId = roleId;
             chosenRoleData = roleData;
@@ -142,11 +140,8 @@ async function loadAssignment(assignmentId) {
         return;
       }
 
-      // Get the current user ID (authentication ID)
-      const currentUserId = auth.currentUser.uid;
-
-      //need first to check if user is actually signed up to any role within
-      //assignment
+      // Use currentUserId passed to loadAssignment
+      // Check if user is already assigned
       const alreadyAssigned = Object.values(userAssignmentMap[assignmentId]).some(ua => ua.userId === currentUserId);
       if (alreadyAssigned) {
         console.log("User already signed up for the assignment");
@@ -154,8 +149,8 @@ async function loadAssignment(assignmentId) {
         return;
       }
 
-      // Create a new document in the userAssignment collection so the jobs get referred to their userUID
-      await addDoc(collection(db, "userAssignment",), {
+      // Use assignmentsRepository to add user assignment
+      await assignmentsRepository.addUserAssignment({
         assignmentId: assignmentId,
         assignmentRoleId: chosenRoleDocId,
         userId: currentUserId,
@@ -166,17 +161,17 @@ async function loadAssignment(assignmentId) {
       alert("Signed up successfully!");
 
       //refresh the assignment details to show the updated list of users assigned to the roles
-      await loadAssignment(assignmentId);
+      await loadAssignment(assignmentId, currentUserId);
     } catch (error) {
       console.error("Error signing up user for role:", error);
     }
   };
 
+
   // LEAVE ASSIGNMENT - SECTION
   // Create event listener so the user signed up can also leave the assignment if needed
   document.querySelector('.leave-btn').onclick = async () => {
     try {
-      const currentUserId = auth.currentUser.uid;
       // use userAssignmentsMap to find the user related to the document
       const userAssignmentEntry = Object.entries(userAssignmentMap[assignmentId]).find(
         ([_, ua]) => ua.userId === currentUserId
@@ -189,13 +184,13 @@ async function loadAssignment(assignmentId) {
 
       const [userAssignmentDocId] = userAssignmentEntry;
 
-      //delete the doc id from firebase (userAssignment)
-      await deleteDoc(doc(db, "userAssignment", userAssignmentDocId));
+      // Use assignmentsRepository to delete user assignment
+      await assignmentsRepository.deleteUserAssignment(userAssignmentDocId);
       console.log("User left the assignment successfully.")
       alert("Left assignment successfully!")
 
       //refresh the list
-      await loadAssignment(assignmentId);
+      await loadAssignment(assignmentId, currentUserId);
 
     } catch (error) {
       console.error("Error leaving assignment:", error);
@@ -203,11 +198,13 @@ async function loadAssignment(assignmentId) {
   };
 }
 
+
 //BackButton to go back to overview page
 const backBtn = document.getElementById('back-to-overview');
 if (backBtn) {
   backBtn.onclick = () => window.location.href = "/?page=overview";
 }
+
 
 window.expandRolesSection = function (roleName) {
   console.log("Expanding role section for: ", roleName);
@@ -219,3 +216,4 @@ window.expandRolesSection = function (roleName) {
     spanElement.innerHTML = listElement.style.display === "none" ? "▲" : "▼";
   }
 }
+
