@@ -1,49 +1,54 @@
-import { app } from '/js/firebase.js'
+import { app } from '/js/firebase.js';
 import {
   getAuth,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
 
+import { AssignmentsRepository } from '/js/repository/assignmentsrepository.js';
+import { UsersRepository } from '/js/repository/usersrepository.js';
 
-import { AssignmentsRepository } from '/js/repository/assignmentsrepository.js'
-
-// initialize Firebase Authentication
 const auth = getAuth(app);
+const db = getFirestore(app);
 const assignmentsRepository = new AssignmentsRepository(app);
+const usersRepository = new UsersRepository(app);
 
-// Listen for changes in authentication state and load assignments when the user is logged in
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    // Show the user's email (if the element exists)
     const usernameElem = document.getElementById("username");
     if (usernameElem) {
       usernameElem.textContent = user.email;
     }
+
+    // Show the button only if the user is a Manager
+    try {
+      const userData = await usersRepository.getUser(user.uid);
+      const roles = await usersRepository.getUserRoles();
+      const userRole = roles.find(r => r.id === userData.userRole);
+
+      const isManager = userRole?.name === "Manager";
+      const createButton = document.querySelector(".create-job-link");
+      if (createButton) {
+        createButton.style.display = isManager ? "block" : "none";
+      }
+    } catch (err) {
+      console.error("Failed to check user role:", err);
+    }
+
     await loadAssignments();
   } else {
     console.log("No user is signed in.");
   }
 });
 
-/**
- * Returns a CSS class based on how full the job is.
- * - If used capacity is 100%, return 'red'
- * - If 80% or more is used, return 'yellow'
- * - Otherwise, return 'green'
- */
 function getCapacityClass(used, total) {
-  if (total === 0) return 'red'; // If no capacity is set, treat as full
+  if (total === 0) return 'red';
   const ratio = used / total;
   if (ratio >= 1) return 'red';
   if (ratio >= 0.8) return 'yellow';
   return 'green';
 }
 
-/**
- * Loads assignments, their roles, and user assignments from Firestore,
- * then builds and displays job cards showing capacity usage.
- */
 async function loadAssignments() {
   try {
     // Use repository to get all assignments, roles, and user assignments
@@ -52,6 +57,24 @@ async function loadAssignments() {
     if (!user) return;
 
     const userId = user.uid;
+
+    const userAssignSnap = await getDocs(collection(db, "userAssignment"));
+    const userAssignmentRoleIds = [];
+
+    userAssignSnap.forEach(doc => {
+      const data = doc.data();
+      if (data.userId === userId && data.assignmentRoleId) {
+        userAssignmentRoleIds.push(data.assignmentRoleId);
+      }
+    });
+
+    const roleIdToAssignmentId = {};
+    const rolesSnap = await getDocs(collection(db, "assignmentRole"));
+    rolesSnap.forEach(roleDoc => {
+      const { assignmentId } = roleDoc.data();
+      roleIdToAssignmentId[roleDoc.id] = assignmentId;
+    });
+
 
     // Find all assignments the user is part of by looking for userId in userAssignmentMap
     const userAssignments = new Set();
@@ -87,19 +110,19 @@ async function loadAssignments() {
         hour: '2-digit',
         minute: '2-digit'
       });
-      
+
       const endDate = timeEnd.toDate().toLocaleString([], {
         hour: '2-digit',
         minute: '2-digit'
       });
-      
 
       card.innerHTML = `
         <div class="job-header">
-          <div class="title-date">
-            <h2 class="job-title">
-              <i class="fas fa-ship"></i> ${name || "No name"}
-            </h2>
+          <div class="job-info">
+            <div class="job-title-line">
+              <i class="fas fa-ship"></i>
+              <h2 class="job-title">${name || "No name"}</h2>
+            </div>
             <p class="date">
               <i class="fas fa-calendar-alt"></i> ${startDate} - ${endDate}
             </p>
@@ -116,7 +139,6 @@ async function loadAssignments() {
         window.location.href = `/?page=assignment&id=${assignmentId}`;
       });
 
-      // Show in appropriate column
       if (userAssignments.has(assignmentId)) {
         console.log("Rendering assignment:", assignmentId, {
           assignedToUser: userAssignments.has(assignmentId)
@@ -126,7 +148,6 @@ async function loadAssignments() {
         availableContainer.appendChild(card);
       }
     });
-
   } catch (error) {
     console.error("Error loading assignments:", error);
   }
