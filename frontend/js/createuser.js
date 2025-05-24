@@ -1,11 +1,5 @@
 import { app, signOut } from '/js/firebase.js';
 import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword
@@ -14,7 +8,6 @@ import { UsersRepository } from '/js/repository/usersrepository.js';
 
 // Initialize auth and Firestore
 const auth = getAuth(app);
-const db = getFirestore(app);
 const uid = new URLSearchParams(window.location.search).get("uid"); // Get the uid from the URL
 
 // Get the create user form element
@@ -33,15 +26,16 @@ if (createUserForm) {
     const lastName = createUserForm.elements["lastName"].value;
     const email = createUserForm.elements["email"].value;
     const phoneNumber = createUserForm.elements["phone"].value;
-    
+
     // Check that no fields are empty
-    if (!firstName || !lastName || !email || !phone) {
+    if (!firstName || !lastName || !email || !phoneNumber) {
       alert("Please fill in all fields.");
       return;
     }
     try {
       const userRole = await getEmployeeRole(); // Default user role
-      await setDoc(doc(db, "users", uid), {
+      const usersRepository = new UsersRepository(app);
+      await usersRepository.addUser(uid, {
         firstName,
         lastName,
         email,

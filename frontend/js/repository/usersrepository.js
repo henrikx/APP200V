@@ -9,6 +9,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
 class UsersRepository {
+  // Add a new user to the Firestore 'users' collection
+  async addUser(userId, userObj) {
+    const userDocRef = doc(this.db, 'users', userId);
+    await setDoc(userDocRef, userObj, { merge: false });
+  }
   constructor(app) {
     this.db = getFirestore(app);
   }
