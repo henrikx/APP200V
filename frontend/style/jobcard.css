@@ -1,18 +1,18 @@
-/* Reset default styles */
+/* reset default styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Base body styles */
+/* base body styles */
 body {
   font-family: Arial, sans-serif;
   background-color: #242D36;
   color: #ffffff;
 }
 
-/* Top header */
+/* top header */
 header {
   background: #304861;
   border-radius: 10px;
@@ -26,7 +26,7 @@ header h1 {
   font-size: 1.5rem;
 }
 
-/* Layout for left and right columns */
+/* layout for left and right columns */
 .jobs-columns {
   display: flex;
   flex-wrap: nowrap;
@@ -68,16 +68,16 @@ header h1 {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Cards layout inside each section */
+/* cards layout inside each section */
 .jobs-container {
-  display: flex;
+  display: flex; /*flex*/
   flex-direction: column;
   gap: 2rem;
   max-width: 650px;
   width: 650px;
 }
 
-/* Individual job card */
+/* individual job card */
 .job-card {
   background-color: #2B2F33;
   color: #ffffff;
@@ -96,12 +96,21 @@ header h1 {
   gap: 1rem;
 }
 
-/* Color indicators on the left side of the card */
-.green { border-left-color: #28a745; }
-.yellow { border-left-color: #ffc107; }
-.red { border-left-color: #D9534F; }
 
-/* Top part of the card */
+/* color indicators on the left side of the card */
+.green {
+  border-left-color: #28a745;
+}
+
+.yellow {
+  border-left-color: #ffc107;
+}
+
+.red {
+  border-left-color: #dc3545;
+}
+
+/* top part of the card: title, date, capacity */
 .job-header {
   display: flex;
   justify-content: space-between;
@@ -111,32 +120,17 @@ header h1 {
 }
 
 .title-date {
-  display: block;
-}
-
-.job-info {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-}
-
-.job-title-line {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.job-title-line i {
-  font-size: 1.3rem;
-  line-height: 1;
-  transform: translateY(-8px);
 }
 
 .job-title {
   font-size: 1.3rem;
   font-weight: 600;
   color: #ffffff;
-  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .date {
@@ -155,7 +149,7 @@ header h1 {
   flex-shrink: 0;
 }
 
-/* Details button inside the card */
+/* button inside the card */
 .details-btn {
   padding: 0.5rem 1rem;
   background-color: #006CE0;
@@ -172,32 +166,42 @@ header h1 {
   background-color: #1E68B6;
 }
 
-/* Floating create button */
-#create-job-card,
-.create-job-link {
+/* button here instead*/
+#create-job-card {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: #006CE0;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-weight: bold;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  transition: background-color 0.2s;
-  z-index: 1000;
-  max-width: 300px;
+  padding: 10px 20px;
+  background-color: #006ce0;
+  color: #fff;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
+  z-index: 1000;
+  width: auto;
+  max-width: 300px;
 }
 
-.create-job-link:hover,
+/* hover effect */
 #create-job-card:hover {
   background-color: #1e68b6;
 }
 
-/* Responsive adjustments */
+/* Responsive button layout so it drops to the bottom of the page
+ and not across the whole page as it was
+*/
+@media (max-width: 768px) {
+  #create-job-card {
+    position: static;
+    margin: 2rem auto 1rem auto;
+    display: block;
+    width: 90%;
+    max-width: 300px;
+    text-align: center;
+  }
+}
+
+/* responsive adjustments */
 @media (max-width: 1200px) {
   .jobs-columns {
     flex-wrap: wrap;
@@ -210,10 +214,13 @@ header h1 {
     width: 100%;
   }
 
-  .jobs-container,
-  .section-header-box {
+  .jobs-container {
     width: 90%;
     max-width: 100%;
+  }
+
+  .section-header-box {
+    width: 90%;
   }
 
   .job-card {
@@ -240,6 +247,11 @@ header h1 {
 
   .job-card {
     font-size: 0.95rem;
+  }
+
+  .job-title {
+    font-size: 1.1rem;
+    white-space: normal;
   }
 
   .date,
