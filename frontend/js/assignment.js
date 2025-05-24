@@ -30,12 +30,15 @@ onAuthStateChanged(auth, async (user) => {
 async function loadAssignment(assignmentId) {
   // Fetch assignments, assignment roles, and user assignments concurrently
   const [assignmentsMap, assignmentCapacityMap, assignmentUsageMap, assignmentRolesMap, userAssignmentMap] = await assignmentsRepository.getAssignments(assignmentId);
-  const { name, timeStart, timeEnd } = assignmentsMap[assignmentId];
+  const { name, description, timeStart, timeEnd } = assignmentsMap[assignmentId];
   const totalCap = assignmentCapacityMap[assignmentId] || 0;
   const usedCount = assignmentUsageMap[assignmentId] || 0;
 
   //Updating the "name" element by retrieving it from firebase
   document.getElementById('name').innerHTML = `${name || "No name"}`;
+
+  //Updating the "description" element by retrieving it from firebase
+  document.getElementById('description').innerHTML = `${description || "No description"}`;
 
   //Converting Firestore Timestamps to local date string //fetched from overview
   if (timeStart && timeEnd) {
