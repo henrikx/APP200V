@@ -3,11 +3,7 @@ import {
   getAuth,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
-import {
-  getFirestore,
-  collection,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
 
 
 import { AssignmentsRepository } from '/js/repository/assignmentsrepository.js'
@@ -50,39 +46,22 @@ function getCapacityClass(used, total) {
  */
 async function loadAssignments() {
   try {
-    const [assignmentsMap, assignmentCapacityMap, assignmentUsageMap] = await assignmentsRepository.getAssignments();
+    // Use repository to get all assignments, roles, and user assignments
+    const [assignmentsMap, assignmentCapacityMap, assignmentUsageMap, assignmentRolesMap, userAssignmentMap] = await assignmentsRepository.getAssignments();
     const user = auth.currentUser;
     if (!user) return;
 
     const userId = user.uid;
-    const db = getFirestore(app);
 
-    // Fetch user assignments directly from Firestore
-    const userAssignSnap = await getDocs(collection(db, "userAssignment"));
-
-    // Build userAssignmentRoleIds (all roles the current user is assigned to)
-    const userAssignmentRoleIds = [];
-    userAssignSnap.forEach(doc => {
-      const data = doc.data();
-      if (data.userId === userId && data.assignmentRoleId) {
-        userAssignmentRoleIds.push(data.assignmentRoleId);
-      }
-    });
-
-    // Build roleId -> assignmentId map
-    const roleIdToAssignmentId = {};
-    const rolesSnap = await getDocs(collection(db, "assignmentRole"));
-    rolesSnap.forEach(roleDoc => {
-      const { assignmentId } = roleDoc.data();
-      roleIdToAssignmentId[roleDoc.id] = assignmentId;
-    });
-
-    // Determine which assignments the user is part of
+    // Find all assignments the user is part of by looking for userId in userAssignmentMap
     const userAssignments = new Set();
-    for (const roleId of userAssignmentRoleIds) {
-      const assignmentId = roleIdToAssignmentId[roleId];
-      if (assignmentId) {
-        userAssignments.add(assignmentId);
+    for (const assignmentId in userAssignmentMap) {
+      const userAssignmentsForAssignment = userAssignmentMap[assignmentId];
+      for (const userAssignmentId in userAssignmentsForAssignment) {
+        const ua = userAssignmentsForAssignment[userAssignmentId];
+        if (ua.userId === userId) {
+          userAssignments.add(assignmentId);
+        }
       }
     }
 
@@ -142,7 +121,6 @@ async function loadAssignments() {
         console.log("Rendering assignment:", assignmentId, {
           assignedToUser: userAssignments.has(assignmentId)
         });
-        
         takenContainer.appendChild(card);
       } else {
         availableContainer.appendChild(card);
