@@ -117,10 +117,11 @@ async function loadAssignments() {
 
       card.innerHTML = `
         <div class="job-header">
-          <div class="title-date">
-            <h2 class="job-title">
-              <i class="fas fa-ship"></i> ${name || "No name"}
-            </h2>
+          <div class="job-info">
+            <div class="job-title-line">
+              <i class="fas fa-ship"></i>
+              <h2 class="job-title">${name || "No name"}</h2>
+            </div>
             <p class="date">
               <i class="fas fa-calendar-alt"></i> ${startDate} - ${endDate}
             </p>
@@ -132,6 +133,7 @@ async function loadAssignments() {
         </div>
         <button class="details-btn" data-assignment-id="${assignmentId}">Details</button>
       `;
+
 
       card.querySelector(".details-btn").addEventListener("click", () => {
         window.location.href = `/?page=assignment&id=${assignmentId}`;
