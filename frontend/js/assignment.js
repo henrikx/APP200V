@@ -57,8 +57,25 @@ async function loadAssignment(assignmentId, currentUserId) {
   } else {
     document.getElementById('date').innerHTML = `Date: No date`;
   }
+
   //Updating the capacity element with the correct information by id
   document.getElementById('capData').innerHTML = `${usedCount} / ${totalCap}`;
+
+  // Populate the role select box dynamically
+  const roleSelect = document.getElementById('roleSelect');
+  if (roleSelect) {
+    roleSelect.innerHTML = '';
+    if (assignmentRolesMap && assignmentRolesMap[assignmentId]) {
+      Object.values(assignmentRolesMap[assignmentId]).forEach(roleData => {
+        if (roleData && roleData.name) {
+          const option = document.createElement('option');
+          option.value = roleData.name;
+          option.textContent = roleData.name;
+          roleSelect.appendChild(option);
+        }
+      });
+    }
+  }
 
     // Clear old roles list
   const rolesListEl = document.getElementById('roles-list');
