@@ -1,8 +1,5 @@
 import { AssignmentsRepository } from "./repository/assignmentsrepository.js";
 import { app } from '/js/firebase.js'
-import { Timestamp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-
-
 
 const repo = new AssignmentsRepository(app);
 
@@ -39,8 +36,8 @@ addBtn.addEventListener("click", () => {
 submitBtn.addEventListener("click", async () => {
   const name = document.getElementById("assignment-name").value.trim();
   const description = document.getElementById("description").value.trim();
-const timeStart = Timestamp.fromDate(new Date(document.getElementById("time-start").value));
-const timeEnd = Timestamp.fromDate(new Date(document.getElementById("time-end").value));
+const timeStart = document.getElementById("time-start").value;
+const timeEnd = document.getElementById("time-end").value;
 
   if (!name || !timeStart || !timeEnd) {
     alert("Fill in all fields");
