@@ -1,0 +1,134 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: 0px;
+    font-family: 'Poppins', sans-serif;
+  }
+  .LogInContainer{
+    border: 2px solid #2e588b;
+    width: 80%;
+    border-width: 1px;
+    
+  }
+  .LogInContainer h2, .LogInContainer h4, .LogInContainer input, .LogInContainer button,
+  #createUserForm h2, #createUserForm h4, #createUserForm input, #createUserForm button{
+    padding: 2%;
+    margin: 2%;
+    width: 90%;
+    border-width: 1px;
+    text-align: center;
+  }
+  .loginButtons{
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    width: 250px;
+  }
+  
+  .Tittler{
+    text-align: center;
+    margin-top: 5%;
+    margin-bottom: 5%;
+  }
+  
+  button{
+    border-radius: 4px;
+    padding: 5px;
+  }
+  
+  @media screen and (min-width: 1374px){
+    .LogInContainer, .registerContainer{
+      border: 2px solid #2e588b;
+      width: 20%;
+      border-width: 1px;
+      padding: 1%;
+    }
+    .LogInContainer h2, .LogInContainer h4, .LogInContainer input, .LogInContainer button,
+    #createUserForm h2, #createUserForm h4, #createUserForm input, #createUserForm button
+    {
+      padding: 2%;
+      margin: 2%;
+      width: 80%;
+      border-radius: 4px;
+    }
+    .Tittler{
+     text-align: center;
+      margin-top: 5%;
+       margin-bottom: 2%;
+    }
+  }
+  
+  .LogInContainer, .registerContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    margin-left: auto;
+    margin-right: auto;
+    color: white;
+    background-color: #2e588b;
+    border-radius: 25px;
+    width: 300px;
+    padding-top:45px;
+    padding-left: 80px;
+    padding-right: 80px;
+    padding-bottom: 60px;
+  }
+  @media screen and (max-width: 500px) {
+    .LogInContainer, .registerContainer{
+      width: 90%;
+      padding-top:5px;
+      padding-left: 8px;
+      padding-right: 8px;
+      padding-bottom: 6px;
+      margin-top: 20%;
+    }
+  }
+  
+  #createUserForm{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    margin-left: auto;
+    margin-right: auto;
+    color: white;
+    background-color: #2e588b;
+    border-radius: 25px;
+    width: 100%;
+  }
+  
+  .Center{
+    text-align: center;
+  }
+  .LogInContainer button, #createUserForm button{
+    color: white;
+    background-color: #2e588b;
+    border-radius: 4px;
+    padding: 4%;
+  }
+  .loginBackRound{
+    background-color: #304861;
+  }
+  
+  
+  .farge1{
+  color: #1e68b6;
+  }
+  .farge2{
+  color: #2e588b;
+  }
+  .farge3{
+  color: #006ce0;
+  }
+  .farge4{
+  color: #304861;
+  }
+  .farge5{
+  color: #242D36;
+  }
+  .farge6{
+  color: #2B2F33;
+  }

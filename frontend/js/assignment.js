@@ -26,6 +26,16 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;")
+    .replace(/\//g, "&#x2F;");
+}
+
 async function loadAssignment(assignmentId, currentUserId) {
   // Fetch assignments, assignment roles, and user assignments concurrently
   const [assignmentsMap, assignmentCapacityMap, assignmentUsageMap, assignmentRolesMap, userAssignmentMap] = await assignmentsRepository.getAssignments(assignmentId);
@@ -34,10 +44,18 @@ async function loadAssignment(assignmentId, currentUserId) {
   const usedCount = assignmentUsageMap[assignmentId] || 0;
 
   //Updating the "name" element by retrieving it from firebase
-  document.getElementById('name').innerHTML = `${name || "No name"}`;
+  if (name) {
+    document.getElementById('name').innerHTML = escapeHtml(name);
+  } else {
+    document.getElementById('name').innerHTML = "No name";
+  }
 
   //Updating the "description" element by retrieving it from firebase
-  document.getElementById('description').innerHTML = `${description || "No description"}`;
+  if (description) {
+    document.getElementById('description').innerHTML = escapeHtml(description);
+  } else {
+    document.getElementById('description').innerHTML = "No description";
+  }
 
   //Converting Firestore Timestamps to local date string //fetched from overview
   if (timeStart && timeEnd) {
@@ -53,13 +71,16 @@ async function loadAssignment(assignmentId, currentUserId) {
       hour: '2-digit',
       minute: '2-digit'
     });
-    document.getElementById('date').innerHTML = `${startDate} - ${endDate}`;
+    document.getElementById('date').innerHTML = escapeHtml(`${startDate} - ${endDate}`);
   } else {
     document.getElementById('date').innerHTML = `Date: No date`;
   }
 
   //Updating the capacity element with the correct information by id
-  document.getElementById('capData').innerHTML = `${usedCount} / ${totalCap}`;
+  const capDataEl = document.getElementById('capData');
+  if (capDataEl) {
+    capDataEl.innerHTML = escapeHtml(`${usedCount} / ${totalCap}`);
+  }
 
   // Populate the role select box dynamically
   const roleSelect = document.getElementById('roleSelect');
@@ -77,60 +98,70 @@ async function loadAssignment(assignmentId, currentUserId) {
     }
   }
 
-    // Clear old roles list
+  // Clear old roles list
   const rolesListEl = document.getElementById('roles-list');
   rolesListEl.innerHTML = "";
 
-  // Figure out which roles actually have someone signed up
-  const assignedRoleIds = new Set(
-    Object.values(userAssignmentMap[assignmentId]).map(ua => ua.assignmentRoleId)
-  );
-
-  // If no one has signed up yet, show a placeholder
-  if (!assignedRoleIds.size) {
-    rolesListEl.innerHTML = `<p>No one has signed up for any role yet.</p>`;
-  }
-
-  // Render only those roles that have at least one signup
-  Object.entries(assignmentRolesMap[assignmentId]).forEach(([roleId, roleData]) => {
-    // Skip any role with zero sign-ups
-    if (!assignedRoleIds.has(roleId)) return;
-
+  // Figure out which roles actually have someone signed up¨
+  if (userAssignmentMap[assignmentId])
+  {
+    const assignedRoleIds = new Set(
+      Object.values(userAssignmentMap[assignmentId]).map(ua => ua.assignmentRoleId)
+    );
+    // Render only those roles that have at least one signup
     // Adder hver rolle til listen som en link
-    rolesListEl.innerHTML += `
-      <a href="#" onclick="expandRolesSection('${roleData.name}');">
-        <span id="${roleData.name}-span">▲</span> ${roleData.name}
-      </a><br>`;
+    // Modified to using createElement and function escapeHTML to prevent XSS
+    // raw data is from firebase
+    Object.entries(assignmentRolesMap[assignmentId]).forEach(([roleId, roleData]) => {
 
-    // pre-create the <ul> for each role so users can be added later
-    //so that the users gets added to their respective ul on signing up
-    document.getElementById('roles-list').innerHTML += `
-      <ul id="${roleData.name}-list" style="display: none;"></ul>`;
-  });
+      if (!assignedRoleIds.has(roleId)) return;
 
-  // Loop through userAssignments and add users to the correct role
-  Object.entries(userAssignmentMap[assignmentId]).forEach(async ([userAssignmentId, userAssignment]) => {
-    try {
-      // Only populate users for roles we rendered above
-      if (!assignedRoleIds.has(userAssignment.assignmentRoleId)) return;
+      const roleNameRaw = roleData.name;
+      const roleNameEscaped = escapeHtml(roleNameRaw);
+      const rolesListEl = document.getElementById('roles-list');
+      if (rolesListEl) {
+        const link = document.createElement("a");
+        link.href = "#";
+        link.innerHTML = `<span id="${roleNameRaw}-span">▲</span> ${roleNameEscaped}`;
+        link.addEventListener("click", () => expandRolesSection(roleNameRaw));
+        rolesListEl.appendChild(link);
 
-      const user = await usersrepository.getUser(userAssignment.userId);
-      const userFullName = `${user.firstName} ${user.lastName}` || "Unknown User";
+        const lineBreak = document.createElement("br");
+        rolesListEl.appendChild(lineBreak);
 
-      const listElement = document.getElementById(
-        `${assignmentRolesMap[assignmentId][userAssignment.assignmentRoleId].name}-list`
-      );
-      if (listElement) {
-        const li = document.createElement("li");
-        li.textContent = userFullName;
-        listElement.appendChild(li);
+        const ul = document.createElement("ul");
+        ul.id = `${roleNameRaw}-list`;
+        ul.style.display = "none";
+        rolesListEl.appendChild(ul);
       }
-    } catch (error) {
-      console.error(`Error fetching user for role:`, error);
-    }
-  });
+    });
+    // Loop through userAssignments and add users to the correct role
+    Object.entries(userAssignmentMap[assignmentId]).forEach(async ([userAssignmentId, userAssignment]) => {
+      try {
+        // Only populate users for roles we rendered above
+        if (!assignedRoleIds.has(userAssignment.assignmentRoleId)) return;
 
+        const user = await usersrepository.getUser(userAssignment.userId);
+        const userFullName = `${user.firstName} ${user.lastName}` || "Unknown User";
+        const userFullNameEscaped = escapeHtml(userFullName);
 
+        const listElement = document.getElementById(
+          `${assignmentRolesMap[assignmentId][userAssignment.assignmentRoleId].name}-list`
+        );
+        if (listElement) {
+          const li = document.createElement("li");
+          li.textContent = userFullNameEscaped;
+          listElement.appendChild(li);
+        }
+      } catch (error) {
+        console.error(`Error fetching user for role:`, error);
+      }
+    });
+
+  } else {
+    // If no one has signed up yet, show a placeholder
+    rolesListEl.innerHTML = escapeHtml("No one has signed up for any role yet.");
+  }
 
 
   // Event listener for sign up button
@@ -139,6 +170,13 @@ async function loadAssignment(assignmentId, currentUserId) {
       // Get the selected role value from the dropdown
       const roleSelect = document.getElementById('roleSelect');
       const chosenRole = roleSelect.value;
+
+      // Making sure the roles exists by validating the chosenRole based on the userUID -- prevent XSS ATTACKS
+      const validRoles = Object.values(assignmentRolesMap[assignmentId]).map(r => r.name.toLowerCase());
+      if (!validRoles.includes(chosenRole.toLowerCase())) {
+        alert("Invalid role selected.");
+        return;
+      }
 
       // Find the matching role doc Id from assignmentRolesMap
       let chosenRoleDocId = null;
@@ -159,7 +197,7 @@ async function loadAssignment(assignmentId, currentUserId) {
 
       // Use currentUserId passed to loadAssignment
       // Check if user is already assigned
-      const alreadyAssigned = Object.values(userAssignmentMap[assignmentId]).some(ua => ua.userId === currentUserId);
+      const alreadyAssigned = userAssignmentMap[assignmentId] && Object.values(userAssignmentMap[assignmentId]).some(ua => ua.userId === currentUserId);
       if (alreadyAssigned) {
         console.log("User already signed up for the assignment");
         alert("You are already signed up for this assignment, Leave assignment if needed to change role or assignment!")
@@ -171,7 +209,7 @@ async function loadAssignment(assignmentId, currentUserId) {
         assignmentId: assignmentId,
         assignmentRoleId: chosenRoleDocId,
         userId: currentUserId,
-        roleName: chosenRoleData.name
+        roleName: escapeHtml(chosenRoleData.name) //especially here since we are inserting to firebase.
       });
 
       console.log("User signed up successfully for role:", chosenRole);
