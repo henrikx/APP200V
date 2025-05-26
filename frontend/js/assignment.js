@@ -102,66 +102,67 @@ async function loadAssignment(assignmentId, currentUserId) {
   const rolesListEl = document.getElementById('roles-list');
   rolesListEl.innerHTML = "";
 
-  // Figure out which roles actually have someone signed up
-  const assignedRoleIds = new Set(
-    Object.values(userAssignmentMap[assignmentId]).map(ua => ua.assignmentRoleId)
-  );
+  // Figure out which roles actually have someone signed up¨
+  if (userAssignmentMap[assignmentId])
+  {
+    const assignedRoleIds = new Set(
+      Object.values(userAssignmentMap[assignmentId]).map(ua => ua.assignmentRoleId)
+    );
+    // Render only those roles that have at least one signup
+    // Adder hver rolle til listen som en link
+    // Modified to using createElement and function escapeHTML to prevent XSS
+    // raw data is from firebase
+    Object.entries(assignmentRolesMap[assignmentId]).forEach(([roleId, roleData]) => {
 
-  // If no one has signed up yet, show a placeholder
-  if (!assignedRoleIds.size) {
+      if (!assignedRoleIds.has(roleId)) return;
+
+      const roleNameRaw = roleData.name;
+      const roleNameEscaped = escapeHtml(roleNameRaw);
+      const rolesListEl = document.getElementById('roles-list');
+      if (rolesListEl) {
+        const link = document.createElement("a");
+        link.href = "#";
+        link.innerHTML = `<span id="${roleNameRaw}-span">▲</span> ${roleNameEscaped}`;
+        link.addEventListener("click", () => expandRolesSection(roleNameRaw));
+        rolesListEl.appendChild(link);
+
+        const lineBreak = document.createElement("br");
+        rolesListEl.appendChild(lineBreak);
+
+        const ul = document.createElement("ul");
+        ul.id = `${roleNameRaw}-list`;
+        ul.style.display = "none";
+        rolesListEl.appendChild(ul);
+      }
+    });
+    // Loop through userAssignments and add users to the correct role
+    Object.entries(userAssignmentMap[assignmentId]).forEach(async ([userAssignmentId, userAssignment]) => {
+      try {
+        // Only populate users for roles we rendered above
+        if (!assignedRoleIds.has(userAssignment.assignmentRoleId)) return;
+
+        const user = await usersrepository.getUser(userAssignment.userId);
+        const userFullName = `${user.firstName} ${user.lastName}` || "Unknown User";
+        const userFullNameEscaped = escapeHtml(userFullName);
+
+        const listElement = document.getElementById(
+          `${assignmentRolesMap[assignmentId][userAssignment.assignmentRoleId].name}-list`
+        );
+        if (listElement) {
+          const li = document.createElement("li");
+          li.textContent = userFullNameEscaped;
+          listElement.appendChild(li);
+        }
+      } catch (error) {
+        console.error(`Error fetching user for role:`, error);
+      }
+    });
+
+  } else {
+    // If no one has signed up yet, show a placeholder
     rolesListEl.innerHTML = escapeHtml("No one has signed up for any role yet.");
   }
 
-  // Render only those roles that have at least one signup
-  // Adder hver rolle til listen som en link
-  // Modified to using createElement and function escapeHTML to prevent XSS
-  // raw data is from firebase
-  Object.entries(assignmentRolesMap[assignmentId]).forEach(([roleId, roleData]) => {
-    
-    if (!assignedRoleIds.has(roleId)) return;
-
-    const roleNameRaw = roleData.name;
-    const roleNameEscaped = escapeHtml(roleNameRaw);
-    const rolesListEl = document.getElementById('roles-list');
-    if (rolesListEl) {
-      const link = document.createElement("a");
-      link.href = "#";
-      link.innerHTML = `<span id="${roleNameRaw}-span">▲</span> ${roleNameEscaped}`;
-      link.addEventListener("click", () => expandRolesSection(roleNameRaw));
-      rolesListEl.appendChild(link);
-
-      const lineBreak = document.createElement("br");
-      rolesListEl.appendChild(lineBreak);
-
-      const ul = document.createElement("ul");
-      ul.id = `${roleNameRaw}-list`;
-      ul.style.display = "none";
-      rolesListEl.appendChild(ul);
-    }
-  });
-
-  // Loop through userAssignments and add users to the correct role
-  Object.entries(userAssignmentMap[assignmentId]).forEach(async ([userAssignmentId, userAssignment]) => {
-    try {
-      // Only populate users for roles we rendered above
-      if (!assignedRoleIds.has(userAssignment.assignmentRoleId)) return;
-
-      const user = await usersrepository.getUser(userAssignment.userId);
-      const userFullName = `${user.firstName} ${user.lastName}` || "Unknown User";
-      const userFullNameEscaped = escapeHtml(userFullName);
-
-      const listElement = document.getElementById(
-        `${assignmentRolesMap[assignmentId][userAssignment.assignmentRoleId].name}-list`
-      );
-      if (listElement) {
-        const li = document.createElement("li");
-        li.textContent = userFullNameEscaped;
-        listElement.appendChild(li);
-      }
-    } catch (error) {
-      console.error(`Error fetching user for role:`, error);
-    }
-  });
 
   // Event listener for sign up button
   document.querySelector('.signup-btn').onclick = async () => {
@@ -196,7 +197,7 @@ async function loadAssignment(assignmentId, currentUserId) {
 
       // Use currentUserId passed to loadAssignment
       // Check if user is already assigned
-      const alreadyAssigned = Object.values(userAssignmentMap[assignmentId]).some(ua => ua.userId === currentUserId);
+      const alreadyAssigned = userAssignmentMap[assignmentId] && Object.values(userAssignmentMap[assignmentId]).some(ua => ua.userId === currentUserId);
       if (alreadyAssigned) {
         console.log("User already signed up for the assignment");
         alert("You are already signed up for this assignment, Leave assignment if needed to change role or assignment!")
