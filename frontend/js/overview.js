@@ -10,6 +10,7 @@ import { UsersRepository } from '/js/repository/usersrepository.js';
 const auth = getAuth(app);
 const assignmentsRepository = new AssignmentsRepository(app);
 const usersRepository = new UsersRepository(app);
+let isManager = false;
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -18,13 +19,12 @@ onAuthStateChanged(auth, async (user) => {
       usernameElem.textContent = user.email;
     }
 
-    // Show the button only if the user is a Manager
     try {
       const userData = await usersRepository.getUser(user.uid);
       const roles = await usersRepository.getUserRoles();
       const userRole = roles.find(r => r.id === userData.userRole);
+      isManager = userRole?.name === "Manager";
 
-      const isManager = userRole?.name === "Manager";
       const createButton = document.querySelector(".create-job-link");
       if (createButton) {
         createButton.style.display = isManager ? "block" : "none";
@@ -49,19 +49,18 @@ function getCapacityClass(used, total) {
 
 async function loadAssignments() {
   try {
-    // Use repository to get all assignments, roles, and user assignments
     const [assignmentsMap, assignmentCapacityMap, assignmentUsageMap, assignmentRolesMap, userAssignmentMap] = await assignmentsRepository.getAssignments();
     const user = auth.currentUser;
     if (!user) return;
 
     const userId = user.uid;
+    const now = new Date();
 
-    // Find all assignments the user is part of by looking for userId in userAssignmentMap
     const userAssignments = new Set();
     for (const assignmentId in userAssignmentMap) {
-      const userAssignmentsForAssignment = userAssignmentMap[assignmentId];
-      for (const userAssignmentId in userAssignmentsForAssignment) {
-        const ua = userAssignmentsForAssignment[userAssignmentId];
+      const userAssignmentForAssignment = userAssignmentMap[assignmentId];
+      for (const userAssignmentId in userAssignmentForAssignment) {
+        const ua = userAssignmentForAssignment[userAssignmentId];
         if (ua.userId === userId) {
           userAssignments.add(assignmentId);
         }
@@ -74,7 +73,15 @@ async function loadAssignments() {
     availableContainer.innerHTML = "";
     takenContainer.innerHTML = "";
 
-    Object.entries(assignmentsMap).forEach(([assignmentId, assignmentData]) => {
+    const upcomingAssignments = Object.entries(assignmentsMap).filter(([, assignmentData]) => {
+      return assignmentData.timeEnd.toDate() > now;
+    });
+
+    const sortedAssignments = upcomingAssignments.sort(([, aData], [, bData]) => {
+      return aData.timeStart.toDate() - bData.timeStart.toDate();
+    });
+
+    sortedAssignments.forEach(([assignmentId, assignmentData]) => {
       const { name, timeStart, timeEnd } = assignmentData;
       const totalCap = assignmentCapacityMap[assignmentId] || 0;
       const usedCount = assignmentUsageMap[assignmentId] || 0;
@@ -96,7 +103,18 @@ async function loadAssignments() {
         minute: '2-digit'
       });
 
+      let deleteButtonHTML = "";
+        if (isManager) {
+        deleteButtonHTML = `
+        <button class="delete-btn" title="Delete Job" data-assignment-id="${assignmentId}">
+        <i class="fas fa-trash-alt"></i>
+        </button>
+        `;
+}
+
+
       card.innerHTML = `
+        ${deleteButtonHTML}
         <div class="job-header">
           <div class="job-info">
             <div class="job-title-line">
@@ -119,6 +137,23 @@ async function loadAssignments() {
         window.location.href = `/?page=assignment&id=${assignmentId}`;
       });
 
+      if (isManager) {
+        const deleteBtn = card.querySelector(".delete-btn");
+        deleteBtn.addEventListener("click", async () => {
+          const confirmed = confirm("Are you sure you want to delete this assignment?");
+          if (!confirmed) return;
+
+          try {
+            await assignmentsRepository.deleteAssignment(assignmentId);
+
+            card.remove();
+          } catch (err) {
+            console.error("Failed to delete assignment:", err);
+            alert("Failed to delete assignment. See console for details.");
+          }
+        });
+      }
+
       if (userAssignments.has(assignmentId)) {
         takenContainer.appendChild(card);
       } else {
@@ -128,4 +163,34 @@ async function loadAssignments() {
   } catch (error) {
     console.error("Error loading assignments:", error);
   }
+}
+
+// Use AssignmentsRepository to perform the deletions
+async function deleteAssignmentCompletely(assignmentId) {
+  const db = assignmentsRepository.db;
+
+  const roleDocs = await getDocs(
+    query(collection(db, "assignmentRole"), where("assignmentId", "==", assignmentId))
+  );
+
+  const batchDeletes = [];
+
+  roleDocs.forEach((doc) => {
+    batchDeletes.push(deleteDoc(doc.ref));
+  });
+
+  const userAssignments = await getDocs(collection(db, "userAssignment"));
+  userAssignments.forEach((uaDoc) => {
+    const data = uaDoc.data();
+    if (data.assignmentRoleId) {
+      const role = roleDocs.docs.find(d => d.id === data.assignmentRoleId);
+      if (role && role.data().assignmentId === assignmentId) {
+        batchDeletes.push(deleteDoc(uaDoc.ref));
+      }
+    }
+  });
+
+  batchDeletes.push(deleteDoc(doc(db, "assignments", assignmentId)));
+
+  await Promise.all(batchDeletes);
 }
