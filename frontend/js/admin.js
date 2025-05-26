@@ -24,7 +24,7 @@ function populateUserDropdown(users) {
 
   users.forEach((user) => {
     const role = allRoles.find((role) => role.id === user.userRole); // Find the role by ID
-    const roleName = role ? role.name : 'Unknown Role'; // Use the role name or fallback to 'Unknown Role'
+    const roleName = role ? role.name : 'Awaiting approval'; // Use the role name or fallback to 'Awaiting approval'
 
     const option = document.createElement('option');
     option.value = user.id;

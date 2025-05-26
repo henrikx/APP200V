@@ -23,6 +23,27 @@ onAuthStateChanged(auth, async (user) => {
             return;
         }
 
+        // Check if user has a userRole assigned
+        if (!dbUser.userRole) {
+            // Hide navigation and show awaiting approval message
+            const navLinks = document.getElementById("navLinks");
+            if (navLinks) navLinks.style.display = "none";
+            const content = document.getElementById("content");
+            if (content) {
+                content.innerHTML = `
+                    <div class="awaiting-accept-message" style="margin:2rem;text-align:center;">
+                        <h2>Your account is awaiting approval</h2>
+                        <p>A manager needs to accept your account before you can use the system.</p>
+                        <button id="signOutButtonAwaiting" style="margin-top:1rem;">Sign out</button>
+                    </div>
+                `;
+                const signOutBtn = document.getElementById('signOutButtonAwaiting');
+                if (signOutBtn) signOutBtn.addEventListener('click', signOut);
+            }
+            return;
+        }
+
+
         // Fetch all roles and determine if user is a Manager
         const roles = await usersRepository.getUserRoles();
         const userRoleId = dbUser.userRole;

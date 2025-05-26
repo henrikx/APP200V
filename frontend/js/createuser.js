@@ -40,7 +40,6 @@ if (createUserForm) {
         lastName,
         email,
         phoneNumber,
-        userRole,
         createdAt: new Date()
       });
 
