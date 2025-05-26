@@ -130,6 +130,35 @@ class AssignmentsRepository {
 
     return assignmentRef.id;
   }
+
+  async deleteAssignment(assignmentId) {
+    const rolesSnap = await getDocs(
+        query(collection(this.db, "assignmentRole"), where("assignmentId", "==", assignmentId))
+    );
+
+    const batchDeletes = [];
+
+    rolesSnap.forEach((docSnap) => {
+        batchDeletes.push(deleteDoc(docSnap.ref));
+    });
+
+    const userAssignSnap = await getDocs(collection(this.db, "userAssignment"));
+
+    userAssignSnap.forEach((uaDoc) => {
+        const data = uaDoc.data();
+        if (data.assignmentRoleId) {
+            const role = rolesSnap.docs.find(d => d.id === data.assignmentRoleId);
+            if (role && role.data().assignmentId === assignmentId) {
+                batchDeletes.push(deleteDoc(uaDoc.ref));
+            }
+        }
+    });
+
+    batchDeletes.push(deleteDoc(doc(this.db, "assignments", assignmentId)));
+
+    await Promise.all(batchDeletes);
+}
+
 }
 
 export { AssignmentsRepository };
