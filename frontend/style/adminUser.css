@@ -12,7 +12,12 @@
   .adminRoleList {
     display: flex;
   }
-  
+  .adminUsersControlSection select{
+    background-color: #242d36;
+    color: white;
+    border-color: transparent;
+  }
+
   .adminUsersControlSection select, .adminUsersControlSection button {
     padding-left: 10px;
     padding-right: 10px;
@@ -26,6 +31,16 @@
     padding: 20px;
     text-align: center;
   
+  }
+
+  .adminPageButton {
+    width: 100%;
+    height: 50px;
+    background-color: #2e588b;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
   }
   
   .adminSearchUser {
@@ -46,6 +61,10 @@
   .adminSearchUser input {
     margin: 50px;
     padding: 10px;
+    background-color: #242d36;
+    color: white;
+    border-radius: 6px;
+    border: none;
   }
   
   
@@ -71,6 +90,9 @@
   .adminUserListSelect {
     width: 100%;
     box-sizing: border-box;
+    background-color: #242d36;
+    color: white;
+    border-color: transparent;
   }
   
   @media screen and (max-width: 1374px){
