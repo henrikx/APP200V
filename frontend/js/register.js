@@ -17,6 +17,12 @@ if (createUserForm) {
     // Retrieve values from the form (ensure field names match your HTML)
     const email = createUserForm.elements["email"].value;
     const password = createUserForm.elements["password"].value;
+    const confirmPassword = createUserForm.elements["confirmPassword"] ? createUserForm.elements["confirmPassword"].value : "";
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
 
     try {
       // Create user in Firebase Auth
