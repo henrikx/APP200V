@@ -69,13 +69,13 @@
     color: white;
     background-color: #2e588b;
     border-radius: 25px;
-    width: 300px;
+    width: 600px;
     padding-top:45px;
     padding-left: 80px;
     padding-right: 80px;
     padding-bottom: 60px;
   }
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 600px) {
     .LogInContainer, .registerContainer{
       width: 90%;
       padding-top:5px;
