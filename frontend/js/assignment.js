@@ -118,11 +118,15 @@ async function loadAssignment(assignmentId, currentUserId) {
 
       const roleNameRaw = roleData.name;
       const roleNameEscaped = escapeHtml(roleNameRaw);
+      const roleCap = roleData.capacity || 0;
+      //count users that are assigned to their respective roles
+      const roleCount = Object.values (userAssignmentMap[assignmentId])
+      .filter(ua=> ua.assignmentRoleId === roleId).length;
       const rolesListEl = document.getElementById('roles-list');
       if (rolesListEl) {
         const link = document.createElement("a");
         link.href = "#";
-        link.innerHTML = `<span id="${roleNameRaw}-span">▲</span> ${roleNameEscaped}`;
+        link.innerHTML = `<span id="${roleNameRaw}-span">▲</span> ${roleNameEscaped} (${roleCount}/${roleCap})`;
         link.addEventListener("click", () => expandRolesSection(roleNameRaw));
         rolesListEl.appendChild(link);
 
@@ -166,6 +170,11 @@ async function loadAssignment(assignmentId, currentUserId) {
 
   // Event listener for sign up button
   document.querySelector('.signup-btn').onclick = async () => {
+    // Block assignment if the capacity is full
+    if(usedCount >= totalCap) {
+        alert("This assignment is already full, cannot sign up!")
+        return
+      }
     try {
       // Get the selected role value from the dropdown
       const roleSelect = document.getElementById('roleSelect');
