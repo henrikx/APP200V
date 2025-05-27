@@ -72,6 +72,8 @@ service cloud.firestore {
     // USERASSIGNMENT COLLECTION
     match /userAssignment/{userAssignmentId} {
       allow read: if request.auth != null && isAcceptedUser();
+      // Employees can update their own userAssignments
+      allow create, update, delete: if request.auth != null && isAcceptedUser() && (request.auth.uid == request.resource.data.userId || request.auth.uid == resource.data.userId);
       allow create, update, delete: if request.auth != null && isManager();
     }
   }
