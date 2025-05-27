@@ -32,31 +32,47 @@ onAuthStateChanged(auth, async (user) => {
 
   // Find all assignments for this user
   // userAssignmentMap is { [assignmentId]: { [userAssignmentId]: userAssignmentData } }
-  for (const assignmentId in userAssignmentMap) {
-    const userAssignments = userAssignmentMap[assignmentId];
-    for (const uaId in userAssignments) {
-      const ua = userAssignments[uaId];
-      if (ua.userId !== user.uid) continue;
+const userShifts = [];
 
-      const assignment = assignmentsMap[assignmentId];
-      if (!assignment) continue;
-      const assignmentName = assignment.name || "Unknown Assignment";
+// Gather all shift entries
+for (const assignmentId in userAssignmentMap) {
+  const userAssignments = userAssignmentMap[assignmentId];
+  for (const uaId in userAssignments) {
+    const ua = userAssignments[uaId];
+    if (ua.userId !== user.uid) continue;
 
-      const start = new Date(assignment.timeStart?.toDate?.() ?? assignment.timeStart);
-      const end = new Date(assignment.timeEnd?.toDate?.() ?? assignment.timeEnd);
-      const date = start.toLocaleDateString();
-      const hours = Math.round((end - start) / (1000 * 60 * 60));
+    const assignment = assignmentsMap[assignmentId];
+    if (!assignment) continue;
 
-      const shiftItem = document.createElement("div");
-      shiftItem.className = "shift-entry";
-      shiftItem.innerHTML = `
-        <span class="shift-title">${assignmentName}</span>
-        <span class="shift-date">${date}</span>
-        <span class="shift-hours">${hours} hrs</span>
-      `;
-      shiftList.appendChild(shiftItem);
-    }
+    const start = new Date(assignment.timeStart?.toDate?.() ?? assignment.timeStart);
+    const end = new Date(assignment.timeEnd?.toDate?.() ?? assignment.timeEnd);
+    const date = start.toLocaleDateString();
+    const hours = Math.round((end - start) / (1000 * 60 * 60));
+    const assignmentName = assignment.name || "Unknown Assignment";
+
+    userShifts.push({
+      assignmentName,
+      dateString: date,
+      hours,
+      timestamp: start.getTime() // used for sorting
+    });
   }
+}
+
+// Sort descending by timestamp (newest date first)
+userShifts.sort((a, b) => b.timestamp - a.timestamp);
+
+// Render sorted shifts
+for (const shift of userShifts) {
+  const shiftItem = document.createElement("div");
+  shiftItem.className = "shift-entry";
+  shiftItem.innerHTML = `
+    <span class="shift-title">${shift.assignmentName}</span>
+    <span class="shift-date">${shift.dateString}</span>
+    <span class="shift-hours">${shift.hours} hrs</span>
+  `;
+  shiftList.appendChild(shiftItem);
+}
 });
 
 // Re-authenticate the current user using their password
