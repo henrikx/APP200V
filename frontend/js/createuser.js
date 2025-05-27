@@ -24,7 +24,7 @@ if (createUserForm) {
     // Retrieve values from the form (ensure field names match your HTML)
     const firstName = createUserForm.elements["firstName"].value;
     const lastName = createUserForm.elements["lastName"].value;
-    const email = createUserForm.elements["email"].value;
+    const email = auth.currentUser.email; // Use the email from the authenticated user
     const phoneNumber = createUserForm.elements["phone"].value;
 
     // Check that no fields are empty
@@ -33,7 +33,6 @@ if (createUserForm) {
       return;
     }
     try {
-      const userRole = await getEmployeeRole(); // Default user role
       const usersRepository = new UsersRepository(app);
       await usersRepository.addUser(uid, {
         firstName,
