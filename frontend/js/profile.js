@@ -47,13 +47,18 @@ for (const assignmentId in userAssignmentMap) {
     const start = new Date(assignment.timeStart?.toDate?.() ?? assignment.timeStart);
     const end = new Date(assignment.timeEnd?.toDate?.() ?? assignment.timeEnd);
     const date = start.toLocaleDateString();
-    const hours = Math.round((end - start) / (1000 * 60 * 60));
+    const durationMs = end - start;
+    const totalMinutes = Math.round(durationMs / (1000 * 60));
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
     const assignmentName = assignment.name || "Unknown Assignment";
 
     userShifts.push({
       assignmentName,
       dateString: date,
       hours,
+      minutes,
       timestamp: start.getTime() // used for sorting
     });
   }
@@ -67,10 +72,11 @@ for (const shift of userShifts) {
   const shiftItem = document.createElement("div");
   shiftItem.className = "shift-entry";
   shiftItem.innerHTML = `
-    <span class="shift-title">${shift.assignmentName}</span>
-    <span class="shift-date">${shift.dateString}</span>
-    <span class="shift-hours">${shift.hours} hrs</span>
-  `;
+  <span class="shift-title">${shift.assignmentName}</span>
+  <span class="shift-date">${shift.dateString}</span>
+  <span class="shift-hours">${shift.hours}h ${shift.minutes}m</span>
+`;
+
   shiftList.appendChild(shiftItem);
 }
 });
