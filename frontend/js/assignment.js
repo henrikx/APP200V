@@ -103,8 +103,7 @@ async function loadAssignment(assignmentId, currentUserId) {
   rolesListEl.innerHTML = "";
 
   // Figure out which roles actually have someone signed up¨
-  if (userAssignmentMap[assignmentId])
-  {
+  if (userAssignmentMap[assignmentId]) {
     const assignedRoleIds = new Set(
       Object.values(userAssignmentMap[assignmentId]).map(ua => ua.assignmentRoleId)
     );
@@ -120,13 +119,19 @@ async function loadAssignment(assignmentId, currentUserId) {
       const roleNameEscaped = escapeHtml(roleNameRaw);
       const roleCap = roleData.capacity || 0;
       //count users that are assigned to their respective roles
-      const roleCount = Object.values (userAssignmentMap[assignmentId])
-      .filter(ua=> ua.assignmentRoleId === roleId).length;
+      const roleCount = Object.values(userAssignmentMap[assignmentId])
+        .filter(ua => ua.assignmentRoleId === roleId).length;
+
+      //raw count of sign ups, and we need to cap it so the roles don¨t go over the cap.
+      const rawCount = Object.values(userAssignmentMap[assignmentId] || {})
+        .filter(ua => ua.assignmentRoleId === roleId).length;
+      const displaycount = Math.min(rawCount, roleCap);
+
       const rolesListEl = document.getElementById('roles-list');
       if (rolesListEl) {
         const link = document.createElement("a");
         link.href = "#";
-        link.innerHTML = `<span id="${roleNameRaw}-span">▲</span> ${roleNameEscaped} (${roleCount}/${roleCap})`;
+        link.innerHTML = `<span id="${roleNameRaw}-span">▲</span> ${roleNameEscaped} (${displaycount}/${roleCap})`;
         link.addEventListener("click", () => expandRolesSection(roleNameRaw));
         rolesListEl.appendChild(link);
 
@@ -172,14 +177,13 @@ async function loadAssignment(assignmentId, currentUserId) {
   document.querySelector('.signup-btn').onclick = async () => {
     // Block assignment if the capacity is full
     if(usedCount >= totalCap) {
-        alert("This assignment is already full, cannot sign up!")
-        return
-      }
+      alert("This assignment is already full, cannot sign up!")
+      return
+    }
     try {
       // Get the selected role value from the dropdown
       const roleSelect = document.getElementById('roleSelect');
       const chosenRole = roleSelect.value;
-
       // Making sure the roles exists by validating the chosenRole based on the userUID -- prevent XSS ATTACKS
       const validRoles = Object.values(assignmentRolesMap[assignmentId]).map(r => r.name.toLowerCase());
       if (!validRoles.includes(chosenRole.toLowerCase())) {
@@ -204,6 +208,16 @@ async function loadAssignment(assignmentId, currentUserId) {
         return;
       }
 
+      //We need to read the capacity from ChosenRole so that the output is correct on the roles.
+      const roleCap = chosenRoleData.capacity || 0;
+      const roleCount = Object.values(userAssignmentMap[assignmentId] || {})
+        .filter(ua => ua.assignmentRoleId === chosenRoleDocId)
+        .length;
+      if (roleCount >= roleCap) {
+        alert(`Role "${chosenRoleData.name}" is full (${roleCap}/${roleCap}).`);
+        return;
+      }
+      
       // Use currentUserId passed to loadAssignment
       // Check if user is already assigned
       const alreadyAssigned = userAssignmentMap[assignmentId] && Object.values(userAssignmentMap[assignmentId]).some(ua => ua.userId === currentUserId);
