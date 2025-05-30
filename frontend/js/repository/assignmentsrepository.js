@@ -131,33 +131,50 @@ class AssignmentsRepository {
     return assignmentRef.id;
   }
 
-  async deleteAssignment(assignmentId) {
-    const rolesSnap = await getDocs(
-        query(collection(this.db, "assignmentRole"), where("assignmentId", "==", assignmentId))
-    );
+    async deleteAssignment(assignmentId) {
+      // Get all roles that belong to this assignment
+      const rolesQuery = query(collection(this.db, "assignmentRole"), where("assignmentId", "==", assignmentId));
+      const rolesSnap = await getDocs(rolesQuery);
 
-    const batchDeletes = [];
+      const batchDeletes = [];
 
-    rolesSnap.forEach((docSnap) => {
+      // Loop through each role and mark it for deletion
+      for (let i = 0; i < rolesSnap.docs.length; i++) {
+        const docSnap = rolesSnap.docs[i];
         batchDeletes.push(deleteDoc(docSnap.ref));
-    });
+      }
 
-    const userAssignSnap = await getDocs(collection(this.db, "userAssignment"));
+      // Get all user assignments
+      const userAssignSnap = await getDocs(collection(this.db, "userAssignment"));
 
-    userAssignSnap.forEach((uaDoc) => {
+      // Go through each user assignment and check if its role is part of this assignment
+      for (let i = 0; i < userAssignSnap.docs.length; i++) {
+        const uaDoc = userAssignSnap.docs[i];
         const data = uaDoc.data();
+
         if (data.assignmentRoleId) {
-            const role = rolesSnap.docs.find(d => d.id === data.assignmentRoleId);
-            if (role && role.data().assignmentId === assignmentId) {
-                batchDeletes.push(deleteDoc(uaDoc.ref));
+          // find the matching role
+          let role = null;
+          for (let j = 0; j < rolesSnap.docs.length; j++) {
+            if (rolesSnap.docs[j].id === data.assignmentRoleId) {
+              role = rolesSnap.docs[j];
+              break;
             }
+          }
+
+          if (role && role.data().assignmentId === assignmentId) {
+            batchDeletes.push(deleteDoc(uaDoc.ref));
+          }
         }
-    });
+      }
 
-    batchDeletes.push(deleteDoc(doc(this.db, "assignments", assignmentId)));
+      // Delete the assignment itself
+      batchDeletes.push(deleteDoc(doc(this.db, "assignments", assignmentId)));
 
-    await Promise.all(batchDeletes);
-}
+      // Run all deletions
+      await Promise.all(batchDeletes);
+    }
+
 
 }
 

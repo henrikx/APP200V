@@ -22,8 +22,17 @@ onAuthStateChanged(auth, async (user) => {
     try {
       const userData = await usersRepository.getUser(user.uid);
       const roles = await usersRepository.getUserRoles();
-      const userRole = roles.find(r => r.id === userData.userRole);
-      isManager = userRole?.name === "Manager";
+
+      
+      let userRole = null;
+      for (let i = 0; i < roles.length; i++) {
+        if (roles[i].id === userData.userRole) {
+          userRole = roles[i];
+          break;
+        }
+      }
+
+      isManager = userRole && userRole.name === "Manager";
 
       const createButton = document.querySelector(".create-job-link");
       if (createButton) {
@@ -38,6 +47,7 @@ onAuthStateChanged(auth, async (user) => {
     console.log("No user is signed in.");
   }
 });
+
 
 function getCapacityClass(used, total) {
   if (total === 0) return 'red';
@@ -56,6 +66,9 @@ async function loadAssignments() {
     const userId = user.uid;
     const now = new Date();
 
+    // This runs when the login status changes (like when someone  logs in).
+    // if a user is logged in, it clears the shift list on the page
+    // then gets all assignments and finds the ones that belong to that user.
     const userAssignments = new Set();
     for (const assignmentId in userAssignmentMap) {
       const userAssignmentForAssignment = userAssignmentMap[assignmentId];
@@ -73,13 +86,32 @@ async function loadAssignments() {
     availableContainer.innerHTML = "";
     takenContainer.innerHTML = "";
 
-    const upcomingAssignments = Object.entries(assignmentsMap).filter(([, assignmentData]) => {
-      return assignmentData.timeEnd.toDate() > now;
-    });
+    
+    // Collect only assignments that are not finished yet
+    const upcomingAssignments = [];
+    for (const assignmentId in assignmentsMap) {
+      const assignmentData = assignmentsMap[assignmentId];
+      if (assignmentData.timeEnd.toDate() > now) {
+        upcomingAssignments.push([assignmentId, assignmentData]);
+      }
+    }
 
-    const sortedAssignments = upcomingAssignments.sort(([, aData], [, bData]) => {
-      return aData.timeStart.toDate() - bData.timeStart.toDate();
-    });
+    // Sort them by start time (earliest first)
+    for (let i = 0; i < upcomingAssignments.length - 1; i++) {
+      for (let j = i + 1; j < upcomingAssignments.length; j++) {
+        const aStart = upcomingAssignments[i][1].timeStart.toDate();
+        const bStart = upcomingAssignments[j][1].timeStart.toDate();
+
+        if (aStart > bStart) {
+          const temp = upcomingAssignments[i];
+          upcomingAssignments[i] = upcomingAssignments[j];
+          upcomingAssignments[j] = temp;
+        }
+      }
+    }
+
+    const sortedAssignments = upcomingAssignments;
+
 
     sortedAssignments.forEach(([assignmentId, assignmentData]) => {
       const { name, timeStart, timeEnd } = assignmentData;
@@ -111,7 +143,6 @@ async function loadAssignments() {
         </button>
         `;
 }
-
 
       card.innerHTML = `
         ${deleteButtonHTML}
@@ -165,7 +196,7 @@ async function loadAssignments() {
   }
 }
 
-// Use AssignmentsRepository to perform the deletions
+
 async function deleteAssignmentCompletely(assignmentId) {
   const db = assignmentsRepository.db;
 
@@ -180,13 +211,20 @@ async function deleteAssignmentCompletely(assignmentId) {
   });
 
   const userAssignments = await getDocs(collection(db, "userAssignment"));
-  userAssignments.forEach((uaDoc) => {
+    userAssignments.forEach((uaDoc) => {
     const data = uaDoc.data();
     if (data.assignmentRoleId) {
-      const role = roleDocs.docs.find(d => d.id === data.assignmentRoleId);
+    let role = null;
+      for (let i = 0; i < roleDocs.docs.length; i++) {
+        if (roleDocs.docs[i].id === data.assignmentRoleId) {
+          role = roleDocs.docs[i];
+          break;
+        }
+      }
       if (role && role.data().assignmentId === assignmentId) {
         batchDeletes.push(deleteDoc(uaDoc.ref));
       }
+
     }
   });
 

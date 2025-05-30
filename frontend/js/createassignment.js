@@ -1,5 +1,5 @@
 import { AssignmentsRepository } from "./repository/assignmentsrepository.js";
-import { app } from '/js/firebase.js'
+import { app } from '/js/firebase.js';
 
 const repo = new AssignmentsRepository(app);
 
@@ -8,7 +8,7 @@ const addBtn = document.getElementById("add-role");
 const submitBtn = document.getElementById("submit-assignment");
 
 // Add role box
-addBtn.addEventListener("click", () => {
+addBtn.addEventListener("click", function () {
   const newEntry = document.createElement("div");
   newEntry.classList.add("role-entry");
   newEntry.innerHTML = `
@@ -26,18 +26,18 @@ addBtn.addEventListener("click", () => {
       </div>
     </div>
   `;
-  newEntry.querySelector(".remove-role").addEventListener("click", () => {
+  newEntry.querySelector(".remove-role").addEventListener("click", function () {
     newEntry.remove();
   });
   roleContainer.appendChild(newEntry);
 });
 
 // Submit assignment
-submitBtn.addEventListener("click", async () => {
+submitBtn.addEventListener("click", async function () {
   const name = document.getElementById("assignment-name").value.trim();
   const description = document.getElementById("description").value.trim();
-const timeStart = document.getElementById("time-start").value;
-const timeEnd = document.getElementById("time-end").value;
+  const timeStart = document.getElementById("time-start").value;
+  const timeEnd = document.getElementById("time-end").value;
 
   if (!name || !timeStart || !timeEnd) {
     alert("Fill in all fields");
@@ -47,13 +47,16 @@ const timeEnd = document.getElementById("time-end").value;
   const roleInputs = roleContainer.querySelectorAll(".role-entry");
   const roles = [];
 
-  roleInputs.forEach(entry => {
+  // Go through each role box and get the name and capacity values.
+  // Save them in the roles list if they are valid.
+  for (let i = 0; i < roleInputs.length; i++) {
+    const entry = roleInputs[i];
     const roleName = entry.querySelector(".role-name").value.trim();
     const capacity = parseInt(entry.querySelector(".capacity").value);
     if (roleName && !isNaN(capacity)) {
       roles.push({ name: roleName, capacity });
     }
-  });
+  }
 
   if (roles.length === 0) {
     alert("You must add at least one role");
