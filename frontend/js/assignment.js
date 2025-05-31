@@ -108,7 +108,6 @@ async function loadAssignment(assignmentId, currentUserId) {
       Object.values(userAssignmentMap[assignmentId]).map(ua => ua.assignmentRoleId)
     );
     // Render only those roles that have at least one signup
-    // Adder hver rolle til listen som en link
     // Modified to using createElement and function escapeHTML to prevent XSS
     // raw data is from firebase
     Object.entries(assignmentRolesMap[assignmentId]).forEach(([roleId, roleData]) => {
@@ -118,15 +117,14 @@ async function loadAssignment(assignmentId, currentUserId) {
       const roleNameRaw = roleData.name;
       const roleNameEscaped = escapeHtml(roleNameRaw);
       const roleCap = roleData.capacity || 0;
-      //count users that are assigned to their respective roles
-      const roleCount = Object.values(userAssignmentMap[assignmentId])
+      
+      // count users that are assigned to their respective roles
+      // we need to cap it so the roles don¨t go over the cap.
+      const roleCount = Object.values(userAssignmentMap[assignmentId] || {})
         .filter(ua => ua.assignmentRoleId === roleId).length;
+      const displaycount = Math.min(roleCount, roleCap);
 
-      //raw count of sign ups, and we need to cap it so the roles don¨t go over the cap.
-      const rawCount = Object.values(userAssignmentMap[assignmentId] || {})
-        .filter(ua => ua.assignmentRoleId === roleId).length;
-      const displaycount = Math.min(rawCount, roleCap);
-
+      // Adder hver rolle til listen som en link
       const rolesListEl = document.getElementById('roles-list');
       if (rolesListEl) {
         const link = document.createElement("a");
@@ -172,7 +170,6 @@ async function loadAssignment(assignmentId, currentUserId) {
     rolesListEl.innerHTML = escapeHtml("No one has signed up for any role yet.");
   }
 
-
   // Event listener for sign up button
   document.querySelector('.signup-btn').onclick = async () => {
     // Block assignment if the capacity is full
@@ -184,25 +181,19 @@ async function loadAssignment(assignmentId, currentUserId) {
       // Get the selected role value from the dropdown
       const roleSelect = document.getElementById('roleSelect');
       const chosenRole = roleSelect.value;
-      // Making sure the roles exists by validating the chosenRole based on the userUID -- prevent XSS ATTACKS
-      const validRoles = Object.values(assignmentRolesMap[assignmentId]).map(r => r.name.toLowerCase());
-      if (!validRoles.includes(chosenRole.toLowerCase())) {
-        alert("Invalid role selected.");
-        return;
-      }
-
+      
       // Find the matching role doc Id from assignmentRolesMap
       let chosenRoleDocId = null;
       let chosenRoleData = null;
       if (assignmentRolesMap && assignmentRolesMap[assignmentId]) {
         Object.entries(assignmentRolesMap[assignmentId]).forEach(([roleId, roleData]) => {
-          if (roleData && roleData.name && roleData.name.toLowerCase() === chosenRole.toLowerCase()) {
+          if (roleData && roleData.name && roleData.name === chosenRole) {
             chosenRoleDocId = roleId;
             chosenRoleData = roleData;
           }
         });
       }
-
+      // only appear if a role appers on the app that isnt on assignmentRolesMap. -- XSS attacks.
       if (!chosenRoleDocId || !chosenRoleData) {
         console.log("No matching role found for selected role:", chosenRole, "- creating new role.");
         return;
@@ -245,7 +236,6 @@ async function loadAssignment(assignmentId, currentUserId) {
     }
   };
 
-
   // LEAVE ASSIGNMENT - SECTION
   // Create event listener so the user signed up can also leave the assignment if needed
   document.querySelector('.leave-btn').onclick = async () => {
@@ -276,13 +266,11 @@ async function loadAssignment(assignmentId, currentUserId) {
   };
 }
 
-
 //BackButton to go back to overview page
 const backBtn = document.getElementById('back-to-overview');
 if (backBtn) {
   backBtn.onclick = () => window.location.href = "/?page=overview";
 }
-
 
 window.expandRolesSection = function (roleName) {
   console.log("Expanding role section for: ", roleName);
@@ -294,4 +282,3 @@ window.expandRolesSection = function (roleName) {
     spanElement.innerHTML = listElement.style.display === "none" ? "▲" : "▼";
   }
 }
-
